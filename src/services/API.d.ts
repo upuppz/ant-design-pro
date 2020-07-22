@@ -1,5 +1,26 @@
 declare namespace API {
   export interface CurrentUser {
+    userId: number;
+    deptId: number;
+    username: string;
+    userType: number;
+    nickname?: string;
+    sex?: string;
+    avatar?: string;
+    idNum?: string;
+    icNum?: string;
+    mobile?: string;
+    enabled?: string;
+    description?: string;
+    lastLoginTime?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    createBy?: string;
+    modifyBy?: string;
+    roles?: string;
+  }
+
+  /* export interface CurrentUser {
     avatar?: string;
     name?: string;
     title?: string;
@@ -12,6 +33,22 @@ declare namespace API {
     userid?: string;
     access?: 'user' | 'guest' | 'admin';
     unreadCount?: number;
+  } */
+
+  export interface OAuth {
+    expiresIn: string | null;
+    scope: string | null;
+    accessToken: string;
+    tokenType: string | null;
+    authorities: string[] | null;
+    refreshToken: string | null;
+  }
+
+  export interface Ret<T = any> {
+    code: string;
+    msg?: string;
+    showType?: number;
+    data?: T;
   }
 
   export interface LoginStateType {

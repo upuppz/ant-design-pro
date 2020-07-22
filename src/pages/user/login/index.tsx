@@ -6,6 +6,14 @@ import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
 import { LoginParamsType, fakeAccountLogin } from '@/services/login';
 import Footer from '@/components/Footer';
+import {
+  ACCESS_TOKEN,
+  AUTHORITIES,
+  EXPIRE_TIME,
+  REFRESH_TOKEN,
+  SCOPE,
+  TOKEN_TYPE,
+} from '@/configs';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 
@@ -52,15 +60,23 @@ const Login: React.FC<{}> = () => {
 
   const { refresh } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState<string>('account');
+  const [type, setType] = useState<string>('2');
 
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
       // 登录
       const msg = await fakeAccountLogin({ ...values, type });
-      if (msg.status === 'ok') {
+      if (msg.access_token) {
         message.success('登录成功！');
+        localStorage.setItem(ACCESS_TOKEN, msg.access_token);
+        localStorage.setItem(REFRESH_TOKEN, msg.refresh_token);
+        localStorage.setItem(SCOPE, msg.scope);
+        localStorage.setItem(TOKEN_TYPE, msg.token_type);
+        const current = new Date();
+        const expireTime = current.setTime(current.getTime() + 1000 * msg.expires_in);
+        localStorage.setItem(EXPIRE_TIME, expireTime.toString());
+        localStorage.setItem(AUTHORITIES, JSON.stringify(msg.authorities));
         replaceGoto();
         setTimeout(() => {
           refresh();
@@ -95,9 +111,9 @@ const Login: React.FC<{}> = () => {
 
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="account" tab="账户密码登录">
+            <Tab key="2" tab="账户密码登录">
               {status === 'error' && loginType === 'account' && !submitting && (
-                <LoginMessage content="账户或密码错误（admin/ant.design）" />
+                <LoginMessage content="账户或密码错误（admin/1234qwer）" />
               )}
 
               <Username

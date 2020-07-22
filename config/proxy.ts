@@ -8,14 +8,34 @@
 export default {
   dev: {
     '/api/': {
-      target: 'https://preview.pro.ant.design',
+      target: 'https://proapi.azurewebsites.net',
       changeOrigin: true,
       pathRewrite: { '^': '' },
+    },
+    '/auth/': {
+      target: 'http://localhost:10001',
+      changeOrigin: true,
+      pathRewrite: { '^/auth': '' },
+    },
+    '/upms/': {
+      target: 'http://localhost:10002',
+      changeOrigin: true,
+      pathRewrite: { '^/upms': '' },
+    },
+    '/visitors/': {
+      target: 'http://localhost:10003',
+      changeOrigin: true,
+      pathRewrite: { '^/visitors': '' },
+    },
+    '/devices/': {
+      target: 'http://localhost:10004',
+      changeOrigin: true,
+      pathRewrite: { '^/devices': '' },
     },
   },
   test: {
     '/api/': {
-      target: 'https://preview.pro.ant.design',
+      target: 'https://proapi.azurewebsites.net',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

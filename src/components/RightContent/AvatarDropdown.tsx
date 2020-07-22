@@ -1,10 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import { outLogin } from '@/services/login';
 import { stringify } from 'querystring';
+import { queryCurrent } from '@/services/user';
+import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -17,6 +19,7 @@ export interface GlobalHeaderRightProps {
  */
 const loginOut = async () => {
   await outLogin();
+  localStorage.clear();
   const { redirect } = getPageQuery();
   // Note: There may be security issues, please note
   if (window.location.pathname !== '/user/login' && !redirect) {
@@ -32,20 +35,29 @@ const loginOut = async () => {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
-  const onMenuClick = useCallback((event: {
-    key: React.Key;
-    keyPath: React.Key[];
-    item: React.ReactInstance;
-    domEvent: React.MouseEvent<HTMLElement>;
-  }) => {
-    const { key } = event;
-    if (key === 'logout') {
-      setInitialState({ ...initialState, currentUser: undefined });
-      loginOut();
-      return;
-    }
-    history.push(`/account/${key}`);
+  useEffect(() => {
+    queryCurrent().then((res) => {
+      setInitialState({ ...initialState, currentUser: res.data });
+    });
   }, []);
+
+  const onMenuClick = useCallback(
+    (event: {
+      key: React.Key;
+      keyPath: React.Key[];
+      item: React.ReactInstance;
+      domEvent: React.MouseEvent<HTMLElement>;
+    }) => {
+      const { key } = event;
+      if (key === 'logout') {
+        setInitialState({ ...initialState, currentUser: undefined });
+        loginOut();
+        return;
+      }
+      history.push(`/account/${key}`);
+    },
+    [],
+  );
 
   const loading = (
     <span className={`${styles.action} ${styles.account}`}>
@@ -65,7 +77,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
   const { currentUser } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!currentUser || !currentUser.nickname) {
     return loading;
   }
 
@@ -94,8 +106,13 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        <Avatar
+          size="small"
+          className={styles.avatar}
+          src={currentUser.avatar ? currentUser.avatar : DEFAULT_AVATAR}
+          alt="avatar"
+        />
+        <span className={`${styles.name} anticon`}>{currentUser.nickname}</span>
       </span>
     </HeaderDropdown>
   );

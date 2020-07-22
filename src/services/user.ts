@@ -5,7 +5,7 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request<API.CurrentUser>('/api/currentUser');
+  return request<API.Ret<API.CurrentUser>>('/upms/user/current');
 }
 
 export async function queryNotices(): Promise<any> {

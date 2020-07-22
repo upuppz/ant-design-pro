@@ -1,7 +1,8 @@
 // src/access.ts
-export default function access(initialState: { currentUser?: API.CurrentUser | undefined }) {
-  const { currentUser } = initialState || {};
-  return {
-    canAdmin: currentUser && currentUser.access === 'admin',
-  };
+export default function access(initialState: { auth?: API.OAuth | undefined }) {
+  const { auth } = initialState || {};
+  const map = auth?.authorities?.map((value) => {
+    return { [value]: true };
+  });
+  return map || {};
 }

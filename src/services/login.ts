@@ -1,4 +1,6 @@
 import { request } from 'umi';
+import { AuthApi } from '@/apis';
+import { ACCESS_TOKEN } from '@/configs';
 
 export interface LoginParamsType {
   username: string;
@@ -9,9 +11,17 @@ export interface LoginParamsType {
 }
 
 export async function fakeAccountLogin(params: LoginParamsType) {
-  return request<API.LoginStateType>('/api/login/account', {
+  /* return request<API.LoginStateType>('/api/login/account', {
     method: 'POST',
     data: params,
+  }); */
+  return request(AuthApi.login, {
+    method: 'POST',
+    data: { ...params, grant_type: 'password', scope: 'all' },
+    requestType: 'form',
+    headers: {
+      Authorization: 'Basic d2l0cGFyay1jbG91ZDoxMjM0NTY=',
+    },
   });
 }
 
@@ -20,5 +30,5 @@ export async function getFakeCaptcha(mobile: string) {
 }
 
 export async function outLogin() {
-  return request('/api/login/outLogin');
+  return request(`${AuthApi.logout}?access_token=${localStorage.getItem(ACCESS_TOKEN)}`);
 }

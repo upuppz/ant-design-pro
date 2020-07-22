@@ -1,33 +1,53 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
-import { queryCurrent } from './services/user';
+// import { queryCurrent } from './services/user';
+import {
+  ACCESS_TOKEN,
+  AUTHORITIES,
+  EXPIRE_TIME,
+  REFRESH_TOKEN,
+  SCOPE,
+  TOKEN_TYPE,
+} from '@/configs';
 import defaultSettings from '../config/defaultSettings';
 
-export async function getInitialState(): Promise<{
+export const getInitialState = async (): Promise<{
   currentUser?: API.CurrentUser;
   settings?: LayoutSettings;
-}> {
+  auth?: API.OAuth;
+}> => {
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
-    try {
-      const currentUser = await queryCurrent();
+    /* try { */
+    // const currentUser = await queryCurrent();
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
+    if (accessToken) {
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+      const tokenType = localStorage.getItem(TOKEN_TYPE);
+      const expiresIn = localStorage.getItem(EXPIRE_TIME);
+      const scope = localStorage.getItem(SCOPE);
+      const authorities = JSON.parse(localStorage.getItem(AUTHORITIES) as string);
       return {
-        currentUser,
+        // currentUser,
+        auth: { accessToken, refreshToken, tokenType, expiresIn, scope, authorities },
         settings: defaultSettings,
       };
-    } catch (error) {
-      history.push('/user/login');
     }
+
+    history.push('/user/login');
+    /* } catch (error) {
+      history.push('/user/login');
+    } */
   }
   return {
     settings: defaultSettings,
   };
-}
+};
 
 export const layout = ({
   initialState,
@@ -62,30 +82,136 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-/**
- * 异常处理程序
- */
-const errorHandler = (error: ResponseError) => {
-  const { response } = error;
-  if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
-
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
-  }
-
-  if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
-  }
-  throw error;
-};
+enum ErrorShowType {
+  SILENT = 0,
+  SUCCESS_MESSAGE = 1,
+  ERROR_MESSAGE = 2,
+  INFO_MESSAGE = 3,
+  WARN_MESSAGE = 4,
+  SUCCESS_NOTIFICATION = 5,
+  ERROR_NOTIFICATION = 6,
+  INFO_NOTIFICATION = 7,
+  WARN_NOTIFICATION = 6,
+  REDIRECT = 9,
+}
 
 export const request: RequestConfig = {
-  errorHandler,
+  errorConfig: {
+    adaptor: (resData) => {
+      const success = resData.code === '00000';
+      return { ...resData, success };
+    },
+  },
+  /**
+   * 异常处理程序
+   */
+  errorHandler: (error: ResponseError) => {
+    const { response } = error;
+    if (error.name === 'BizError') {
+      // @ts-ignore
+      const { code } = error;
+      if (code !== '00000') {
+        switch (code) {
+          case 'A0101':
+            console.log('===== A0101 ======');
+            console.log(error.data);
+            break;
+          default:
+            notification.error({
+              description: error.data,
+              message: error.message,
+            });
+        }
+      }
+      throw error;
+    } else if (response && response.status) {
+      const errorText = codeMessage[response.status] || response.statusText;
+      const { status, url } = response;
+      notification.error({
+        message: `请求错误 ${status}: ${url}`,
+        description: errorText,
+      });
+    } else if (!response) {
+      notification.error({
+        description: '您的网络发生异常，无法连接服务器',
+        message: '网络异常',
+      });
+    }
+    return response;
+  },
+  // 中间件统一提示处理
+  middlewares: [
+    async (ctx, next) => {
+      await next();
+      const { res } = ctx;
+      // 统一提示处理
+      if (res?.showType) {
+        const errorMessage = res.msg;
+        // const errorCode = res.code;
+        const errorData = res.data;
+        switch (res.showType) {
+          case ErrorShowType.SILENT:
+            // do nothing
+            break;
+          case ErrorShowType.SUCCESS_MESSAGE:
+            message.success(errorData || errorMessage);
+            break;
+          case ErrorShowType.ERROR_MESSAGE:
+            message.error(errorData || errorMessage);
+            break;
+          case ErrorShowType.INFO_MESSAGE:
+            message.info(errorData || errorMessage);
+            break;
+          case ErrorShowType.WARN_MESSAGE:
+            message.warn(errorData || errorMessage);
+            break;
+          case ErrorShowType.SUCCESS_NOTIFICATION:
+            notification.success({
+              message: errorMessage,
+              description: errorData,
+            });
+            break;
+          case ErrorShowType.ERROR_NOTIFICATION:
+            notification.error({
+              message: errorMessage,
+              description: errorData,
+            });
+            break;
+          case ErrorShowType.INFO_NOTIFICATION:
+            notification.info({
+              message: errorMessage,
+              description: errorData,
+            });
+            break;
+          case ErrorShowType.WARN_NOTIFICATION:
+            notification.warn({
+              message: errorMessage,
+              description: errorData,
+            });
+            break;
+          /* case ErrorShowType.REDIRECT:
+          // @ts-ignore
+          history.push({
+            pathname: DEFAULT_ERROR_PAGE,
+            query: { errorCode, errorMessage },
+          });
+          // redirect to error page
+          break; */
+          default:
+            message.error(errorMessage);
+            break;
+        }
+      }
+    },
+  ],
+  requestInterceptors: [
+    (url, options) => {
+      const accessToken = localStorage.getItem('access_token');
+      if (accessToken) {
+        // eslint-disable-next-line no-param-reassign
+        options.headers = { Authorization: `Bearer ${accessToken}` };
+      }
+      return { url, options };
+    },
+  ],
 };
