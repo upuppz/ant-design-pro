@@ -40,7 +40,6 @@ declare namespace API {
     scope: string | null;
     accessToken: string;
     tokenType: string | null;
-    authorities: string[] | null;
     refreshToken: string | null;
   }
 

@@ -22,6 +22,7 @@ export async function fakeAccountLogin(params: LoginParamsType) {
     headers: {
       Authorization: 'Basic d2l0cGFyay1jbG91ZDoxMjM0NTY=',
     },
+    skipErrorHandler: true,
   });
 }
 

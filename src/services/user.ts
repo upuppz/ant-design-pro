@@ -1,11 +1,16 @@
 import { request } from 'umi';
+import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 
 export async function query() {
   return request<API.CurrentUser[]>('/api/users');
 }
 
 export async function queryCurrent() {
-  return request<API.Ret<API.CurrentUser>>('/upms/user/current');
+  const res = await request<API.Ret<API.CurrentUser>>('/upms/user/current');
+  if (res.data && !res.data?.avatar) {
+    res.data.avatar = DEFAULT_AVATAR;
+  }
+  return res.data;
 }
 
 export async function queryNotices(): Promise<any> {

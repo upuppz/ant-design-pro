@@ -20,6 +20,7 @@ export const getInitialState = async (): Promise<{
   currentUser?: API.CurrentUser;
   settings?: LayoutSettings;
   auth?: API.OAuth;
+  hasRoutes?: string[];
 }> => {
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
@@ -34,7 +35,8 @@ export const getInitialState = async (): Promise<{
       const authorities = JSON.parse(localStorage.getItem(AUTHORITIES) as string);
       return {
         // currentUser,
-        auth: { accessToken, refreshToken, tokenType, expiresIn, scope, authorities },
+        auth: { accessToken, refreshToken, tokenType, expiresIn, scope },
+        hasRoutes: authorities,
         settings: defaultSettings,
       };
     }
@@ -98,7 +100,7 @@ enum ErrorShowType {
 export const request: RequestConfig = {
   errorConfig: {
     adaptor: (resData) => {
-      const success = resData.code === '00000';
+      const success = resData?.code === '00000';
       return { ...resData, success };
     },
   },
@@ -117,10 +119,11 @@ export const request: RequestConfig = {
             console.log(error.data);
             break;
           default:
-            notification.error({
-              description: error.data,
-              message: error.message,
-            });
+          /*
+           notification.error({
+             description: error.data,
+             message: error.message,
+           }); */
         }
       }
       throw error;

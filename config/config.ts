@@ -4,7 +4,6 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -42,12 +41,13 @@ export default defineConfig({
         },
       ],
     },
-
     {
       path: '/welcome',
       name: 'welcome',
       icon: 'smile',
       component: './Welcome',
+      /*access: 'authorityFilter',
+    authority: ['ROLE_ADMIN', 'user'],*/
     },
     {
       path: '/admin',
@@ -72,6 +72,20 @@ export default defineConfig({
     {
       path: '/',
       redirect: '/welcome',
+    },
+    {
+      name: 'account',
+      icon: 'user',
+      path: '/account',
+      hideInMenu: true,
+      routes: [
+        {
+          name: 'center',
+          icon: 'smile',
+          path: '/account/center',
+          component: './account/center',
+        },
+      ],
     },
     {
       component: './404',
