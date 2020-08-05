@@ -1,4 +1,3 @@
-// #region AuthApi
 /**
  * 验证功能相关
  */
@@ -13,4 +12,37 @@ export const AuthApi = {
    */
   logout: '/auth/logout',
 };
-// #endregion
+
+/**
+ * 用户权限管理相关
+ */
+export const UpmsApi = {
+  /**
+   * 管理端用户API
+   */
+  user: '/upms/user',
+
+  /**
+   * 企业员工API
+   */
+  employees: '/upms/enterprise/employees',
+  /**
+   * 企业员工API
+   */
+  uploadAvatar: '/upms/enterprise/upload',
+};
+
+/**
+ * 用户权限管理相关
+ */
+export const GuestsApi = {
+  /**
+   * 企业API
+   */
+  employees: '/guests/enterprise',
+
+  /**
+   * 企业API
+   */
+  guests: '/guests/enterprise/guests',
+};

@@ -20,10 +20,12 @@ export interface EnterpriseModelType {
   effects: {
     info: Effect;
     loginLog: Effect;
+    changeAvatar: Effect;
   };
   reducers: {
     saveEnterpriseInfo: Reducer<EnterpriseModalState>;
     saveLoginLog: Reducer<EnterpriseModalState>;
+    saveAvatar: Reducer<EnterpriseModalState>;
   };
 }
 
@@ -57,6 +59,16 @@ const Model: EnterpriseModelType = {
         total: response.total,
       });
     },
+    *changeAvatar(_, { put }) {
+      console.log('changeAvatar');
+      console.log(_);
+      const spreadElements = _;
+      console.log(spreadElements);
+      yield put({
+        type: 'saveAvatar',
+        avatar: _.avatar,
+      });
+    },
   },
 
   reducers: {
@@ -78,6 +90,15 @@ const Model: EnterpriseModelType = {
         logsCurrent: action.current,
         logsPages: action.pages,
         logsTotal: action.total,
+      };
+    },
+    saveAvatar(state, action) {
+      console.log('changeAvatar');
+      console.log(state);
+      console.log(action);
+      return {
+        ...(state as EnterpriseModalState),
+        info: { ...state?.info, avatar: action.avatar },
       };
     },
   },

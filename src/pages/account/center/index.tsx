@@ -9,6 +9,7 @@ import BaseView from './components/BaseView';
 import LoginLogs from './components/LoginLogs';
 import { EnterpriseInfo } from './data.d';
 import styles from './Center.less';
+import 'antd/es/modal/style';
 
 interface CenterProps extends RouteChildrenProps {
   dispatch: Dispatch;

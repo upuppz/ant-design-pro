@@ -4,7 +4,11 @@ import { Button, Form, Input, message, Upload } from 'antd';
 import { connect } from 'umi';
 import { EnterpriseModalState } from '@/pages/account/center/model';
 import { UploadOutlined } from '@ant-design/icons/lib';
+import { UpmsApi } from '@/apis';
+import ImgCrop from 'antd-img-crop';
+import { UploadChangeParam } from 'antd/lib/upload/interface';
 import styles from './style.less';
+import { Dispatch } from '@@/plugin-dva/connect';
 
 const handleFinish = () => {
   // message.success('更新基本信息成功');
@@ -12,27 +16,54 @@ const handleFinish = () => {
 };
 
 // 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({ avatar }: { avatar: string | undefined }) => (
-  <>
-    <div className={styles.avatar_title}>头像</div>
-    <div className={styles.avatar}>
-      <img src={avatar} alt="avatar" />
-    </div>
-    <Upload showUploadList={false}>
-      <div className={styles.button_view}>
-        <Button>
-          <UploadOutlined />
-          更换头像
-        </Button>
+const AvatarView = ({ avatar, dispatch }: { avatar: string | undefined; dispatch: Dispatch }) => {
+  const onChange = (info: UploadChangeParam) => {
+    if (info.file.status === 'done') {
+      const { response } = info.file;
+      if (response.code === '00000') {
+        dispatch({
+          type: 'enterprise/changeAvatar',
+          avatar: response.data,
+        });
+        message.success('头像更新成功');
+      } else {
+        message.success(`头像更新失败,${response.msg}`);
+      }
+    } else if (info.file.status === 'error') {
+      message.error('头像更新失败');
+    }
+  };
+
+  return (
+    <>
+      <div className={styles.avatar_title}>头像</div>
+      <div className={styles.avatar}>
+        <img src={avatar} alt="avatar" />
       </div>
-    </Upload>
-  </>
-);
+      <ImgCrop rotate>
+        <Upload
+          showUploadList={false}
+          action={UpmsApi.uploadAvatar}
+          headers={{ Authorization: `Bearer ${localStorage.getItem('access_token')}` }}
+          onChange={onChange}
+        >
+          <div className={styles.button_view}>
+            <Button>
+              <UploadOutlined />
+              更换头像
+            </Button>
+          </div>
+        </Upload>
+      </ImgCrop>
+    </>
+  );
+};
 
-const BaseView: React.FC<{ info: Partial<EnterpriseInfo> }> = ({ info }) => {
+const BaseView: React.FC<{ info: Partial<EnterpriseInfo>; dispatch: Dispatch }> = ({
+  info,
+  dispatch,
+}) => {
   const [useForm] = Form.useForm();
-
-  /* const getViewDom = useRef(null); */
 
   useEffect(() => {
     if (Object.keys(info).length > 0) {
@@ -70,7 +101,7 @@ const BaseView: React.FC<{ info: Partial<EnterpriseInfo> }> = ({ info }) => {
         </Form>
       </div>
       <div className={styles.right}>
-        <AvatarView avatar={info.avatar} />
+        <AvatarView avatar={info.avatar} dispatch={dispatch} />
       </div>
     </div>
   );

@@ -1,4 +1,9 @@
 export default {
+  'menu.upms': '企业管理',
+  'menu.upms.employee': '人员列表',
+  'menu.record': '记录查询',
+  'menu.record.guest': '访客查询',
+  // ========= 华丽分割线 =========
   'menu.welcome': '欢迎',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',

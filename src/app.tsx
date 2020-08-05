@@ -100,8 +100,8 @@ enum ErrorShowType {
 export const request: RequestConfig = {
   errorConfig: {
     adaptor: (resData) => {
-      const success = resData?.code === '00000';
-      return { ...resData, success };
+      const success = resData?.code ? resData?.code === '00000' : true;
+      return { errorMessage: resData?.msg, errorCode: resData?.code, success };
     },
   },
   /**
@@ -110,20 +110,14 @@ export const request: RequestConfig = {
   errorHandler: (error: ResponseError) => {
     const { response } = error;
     if (error.name === 'BizError') {
-      // @ts-ignore
-      const { code } = error;
+      const { code, data } = error.data;
       if (code !== '00000') {
+        // 全局通用错误处理
         switch (code) {
           case 'A0101':
-            console.log('===== A0101 ======');
-            console.log(error.data);
+            console.log(data);
             break;
           default:
-          /*
-           notification.error({
-             description: error.data,
-             message: error.message,
-           }); */
         }
       }
       throw error;
@@ -152,57 +146,59 @@ export const request: RequestConfig = {
         const errorMessage = res.msg;
         // const errorCode = res.code;
         const errorData = res.data;
-        switch (res.showType) {
-          case ErrorShowType.SILENT:
-            // do nothing
-            break;
-          case ErrorShowType.SUCCESS_MESSAGE:
-            message.success(errorData || errorMessage);
-            break;
-          case ErrorShowType.ERROR_MESSAGE:
-            message.error(errorData || errorMessage);
-            break;
-          case ErrorShowType.INFO_MESSAGE:
-            message.info(errorData || errorMessage);
-            break;
-          case ErrorShowType.WARN_MESSAGE:
-            message.warn(errorData || errorMessage);
-            break;
-          case ErrorShowType.SUCCESS_NOTIFICATION:
-            notification.success({
-              message: errorMessage,
-              description: errorData,
+        if (errorData === null || typeof errorData === 'string') {
+          switch (res.showType) {
+            case ErrorShowType.SILENT:
+              // do nothing
+              break;
+            case ErrorShowType.SUCCESS_MESSAGE:
+              message.success(errorData || errorMessage);
+              break;
+            case ErrorShowType.ERROR_MESSAGE:
+              message.error(errorData || errorMessage);
+              break;
+            case ErrorShowType.INFO_MESSAGE:
+              message.info(errorData || errorMessage);
+              break;
+            case ErrorShowType.WARN_MESSAGE:
+              message.warn(errorData || errorMessage);
+              break;
+            case ErrorShowType.SUCCESS_NOTIFICATION:
+              notification.success({
+                message: errorMessage,
+                description: errorData,
+              });
+              break;
+            case ErrorShowType.ERROR_NOTIFICATION:
+              notification.error({
+                message: errorMessage,
+                description: errorData,
+              });
+              break;
+            case ErrorShowType.INFO_NOTIFICATION:
+              notification.info({
+                message: errorMessage,
+                description: errorData,
+              });
+              break;
+            case ErrorShowType.WARN_NOTIFICATION:
+              notification.warn({
+                message: errorMessage,
+                description: errorData,
+              });
+              break;
+            /* case ErrorShowType.REDIRECT:
+            // @ts-ignore
+            history.push({
+              pathname: DEFAULT_ERROR_PAGE,
+              query: { errorCode, errorMessage },
             });
-            break;
-          case ErrorShowType.ERROR_NOTIFICATION:
-            notification.error({
-              message: errorMessage,
-              description: errorData,
-            });
-            break;
-          case ErrorShowType.INFO_NOTIFICATION:
-            notification.info({
-              message: errorMessage,
-              description: errorData,
-            });
-            break;
-          case ErrorShowType.WARN_NOTIFICATION:
-            notification.warn({
-              message: errorMessage,
-              description: errorData,
-            });
-            break;
-          /* case ErrorShowType.REDIRECT:
-          // @ts-ignore
-          history.push({
-            pathname: DEFAULT_ERROR_PAGE,
-            query: { errorCode, errorMessage },
-          });
-          // redirect to error page
-          break; */
-          default:
-            message.error(errorMessage);
-            break;
+            // redirect to error page
+            break; */
+            default:
+              message.error(errorMessage);
+              break;
+          }
         }
       }
     },

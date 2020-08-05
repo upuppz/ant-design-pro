@@ -5,13 +5,14 @@ import proxy from './proxy';
 
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
+  history: { type: 'hash' },
   hash: true,
   antd: {},
   dva: {
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
+    name: '出入登记管理系统',
     locale: true,
     siderWidth: 208,
   },
@@ -42,6 +43,10 @@ export default defineConfig({
       ],
     },
     {
+      path: '/',
+      redirect: '/welcome',
+    },
+    {
       path: '/welcome',
       name: 'welcome',
       icon: 'smile',
@@ -50,28 +55,30 @@ export default defineConfig({
     authority: ['ROLE_ADMIN', 'user'],*/
     },
     {
-      path: '/admin',
-      name: 'admin',
+      path: '/upms',
+      name: 'upms',
       icon: 'crown',
-      component: './Admin',
       routes: [
         {
-          path: '/admin/sub-page',
-          name: 'sub-page',
+          path: '/upms/employee',
+          name: 'employee',
           icon: 'smile',
-          component: './Welcome',
+          component: './upms/employee',
         },
       ],
     },
     {
-      name: 'list.table-list',
-      icon: 'table',
-      path: '/list',
-      component: './ListTableList',
-    },
-    {
-      path: '/',
-      redirect: '/welcome',
+      path: '/record',
+      name: 'record',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/record/guest',
+          name: 'guest',
+          icon: 'smile',
+          component: './record/guest',
+        },
+      ],
     },
     {
       name: 'account',

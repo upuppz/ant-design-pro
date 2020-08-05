@@ -84,7 +84,7 @@ const Login: React.FC<{}> = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      setUserLoginState({ status: 'error', type });
     } catch (error) {
       message.error('登录失败，请重试！');
     }
@@ -112,7 +112,7 @@ const Login: React.FC<{}> = () => {
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
             <Tab key="2" tab="账户密码登录">
-              {status === 'error' && loginType === 'account' && !submitting && (
+              {status === 'error' && loginType === '2' && !submitting && (
                 <LoginMessage content="账户或密码错误（admin/1234qwer）" />
               )}
 

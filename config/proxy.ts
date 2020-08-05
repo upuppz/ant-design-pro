@@ -22,10 +22,10 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/upms': '' },
     },
-    '/visitors/': {
+    '/guests/': {
       target: 'http://localhost:10003',
       changeOrigin: true,
-      pathRewrite: { '^/visitors': '' },
+      pathRewrite: { '^/guests': '' },
     },
     '/devices/': {
       target: 'http://localhost:10004',
