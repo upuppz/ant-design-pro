@@ -18,6 +18,8 @@ declare namespace API {
     createBy?: string;
     modifyBy?: string;
     roles?: string;
+    buildingName?: string;
+    deptName?: string;
   }
 
   /* export interface CurrentUser {

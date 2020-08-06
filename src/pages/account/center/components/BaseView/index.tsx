@@ -1,14 +1,11 @@
 import React, { useEffect } from 'react';
-import { EnterpriseInfo } from '@/pages/account/center/data';
 import { Button, Form, Input, message, Upload } from 'antd';
-import { connect } from 'umi';
-import { EnterpriseModalState } from '@/pages/account/center/model';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { UpmsApi } from '@/apis';
 import ImgCrop from 'antd-img-crop';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
+import { useModel } from '@@/plugin-model/useModel';
 import styles from './style.less';
-import { Dispatch } from '@@/plugin-dva/connect';
 
 const handleFinish = () => {
   // message.success('更新基本信息成功');
@@ -16,15 +13,18 @@ const handleFinish = () => {
 };
 
 // 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({ avatar, dispatch }: { avatar: string | undefined; dispatch: Dispatch }) => {
+const AvatarView = ({
+  avatar,
+  onChangeAvatar,
+}: {
+  avatar: string | undefined;
+  onChangeAvatar: any;
+}) => {
   const onChange = (info: UploadChangeParam) => {
     if (info.file.status === 'done') {
       const { response } = info.file;
       if (response.code === '00000') {
-        dispatch({
-          type: 'enterprise/changeAvatar',
-          avatar: response.data,
-        });
+        onChangeAvatar(response.data);
         message.success('头像更新成功');
       } else {
         message.success(`头像更新失败,${response.msg}`);
@@ -59,17 +59,22 @@ const AvatarView = ({ avatar, dispatch }: { avatar: string | undefined; dispatch
   );
 };
 
-const BaseView: React.FC<{ info: Partial<EnterpriseInfo>; dispatch: Dispatch }> = ({
-  info,
-  dispatch,
-}) => {
+const BaseView: React.FC = () => {
   const [useForm] = Form.useForm();
 
+  const { initialState, setInitialState } = useModel('@@initialState');
+  // @ts-ignore
+  const { currentUser } = initialState;
+
   useEffect(() => {
-    if (Object.keys(info).length > 0) {
-      useForm.setFieldsValue(info);
+    if (currentUser && Object.keys(currentUser).length > 0) {
+      useForm.setFieldsValue(currentUser);
     }
-  }, [info]);
+  }, [currentUser]);
+
+  const onChangeAvatar = (avatar: string) => {
+    setInitialState({ ...initialState, currentUser: { ...currentUser, avatar } });
+  };
 
   return (
     <div className={styles.baseView}>
@@ -77,7 +82,7 @@ const BaseView: React.FC<{ info: Partial<EnterpriseInfo>; dispatch: Dispatch }> 
         <Form
           layout="vertical"
           onFinish={handleFinish}
-          initialValues={info}
+          initialValues={currentUser}
           hideRequiredMark
           form={useForm}
         >
@@ -101,12 +106,10 @@ const BaseView: React.FC<{ info: Partial<EnterpriseInfo>; dispatch: Dispatch }> 
         </Form>
       </div>
       <div className={styles.right}>
-        <AvatarView avatar={info.avatar} dispatch={dispatch} />
+        <AvatarView avatar={currentUser?.avatar} onChangeAvatar={onChangeAvatar} />
       </div>
     </div>
   );
 };
 
-export default connect(({ enterprise }: { enterprise: EnterpriseModalState }) => ({
-  info: enterprise.info,
-}))(BaseView);
+export default BaseView;

@@ -13,8 +13,9 @@ export default defineConfig({
   },
   layout: {
     name: '出入登记管理系统',
+    logo: '/logo.svg',
     locale: true,
-    siderWidth: 208,
+    siderWidth: 228,
   },
   locale: {
     // default zh-CN

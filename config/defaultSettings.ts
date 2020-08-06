@@ -12,8 +12,8 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
-  pwa: false,
+  title: '出入登记管理系统',
+  pwa: true,
   iconfontUrl: '',
 } as LayoutSettings & {
   pwa: boolean;

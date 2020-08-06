@@ -20,7 +20,7 @@ export const UpmsApi = {
   /**
    * 管理端用户API
    */
-  user: '/upms/user',
+  enterprise: '/upms/enterprise',
 
   /**
    * 企业员工API

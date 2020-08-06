@@ -1,4 +1,4 @@
-export interface EnterpriseInfo {
+/* export interface EnterpriseInfo {
   deptId: number;
   deptName: string;
   buildingId: number;
@@ -8,7 +8,7 @@ export interface EnterpriseInfo {
   mobile: string;
   description: string;
   lastLoginTime: string;
-}
+} */
 
 export interface ListItemDataType {
   id: number;

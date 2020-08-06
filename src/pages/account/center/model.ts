@@ -1,10 +1,9 @@
 import { Reducer, Effect } from 'umi';
-import DEFAULT_AVATAR from '@/assets/default_avatar.png';
-import { EnterpriseInfo, ListItemDataType } from './data.d';
-import { enterpriseInfo, listLoginLog } from './service';
+import { ListItemDataType } from './data.d';
+import { listLoginLog } from './service';
 
-export interface EnterpriseModalState {
-  info: Partial<EnterpriseInfo>;
+export interface CenterModalState {
+  // info: Partial<EnterpriseInfo>;
   logs: ListItemDataType[];
   // 当前页
   logsCurrent: number;
@@ -16,24 +15,21 @@ export interface EnterpriseModalState {
 
 export interface EnterpriseModelType {
   namespace: string;
-  state: EnterpriseModalState;
+  state: CenterModalState;
   effects: {
-    info: Effect;
     loginLog: Effect;
-    changeAvatar: Effect;
+    // changeAvatar: Effect;
   };
   reducers: {
-    saveEnterpriseInfo: Reducer<EnterpriseModalState>;
-    saveLoginLog: Reducer<EnterpriseModalState>;
-    saveAvatar: Reducer<EnterpriseModalState>;
+    saveEnterpriseInfo: Reducer<CenterModalState>;
+    saveLoginLog: Reducer<CenterModalState>;
+    saveAvatar: Reducer<CenterModalState>;
   };
 }
 
 const Model: EnterpriseModelType = {
-  namespace: 'enterprise',
-
+  namespace: 'center',
   state: {
-    info: {},
     logs: [],
     logsCurrent: 0,
     logsPages: 1,
@@ -41,13 +37,6 @@ const Model: EnterpriseModelType = {
   },
 
   effects: {
-    *info(_, { call, put }) {
-      const response = yield call(enterpriseInfo);
-      yield put({
-        type: 'saveEnterpriseInfo',
-        payload: response,
-      });
-    },
     *loginLog(_, { call, put, select }) {
       const current = yield select((state: any) => state[Model.namespace].logsCurrent);
       const response = yield call(listLoginLog, { current: current + 1 });
@@ -59,40 +48,30 @@ const Model: EnterpriseModelType = {
         total: response.total,
       });
     },
-    *changeAvatar(_, { put }) {
-      console.log('changeAvatar');
-      console.log(_);
-      const spreadElements = _;
-      console.log(spreadElements);
-      yield put({
-        type: 'saveAvatar',
-        avatar: _.avatar,
-      });
-    },
+    /* *changeAvatar(_, { put }) {
+       console.log('changeAvatar');
+       console.log(_);
+       const spreadElements = _;
+       console.log(spreadElements);
+       yield put({
+         type: 'saveAvatar',
+         avatar: _.avatar,
+       });
+     }, */
   },
 
   reducers: {
-    saveEnterpriseInfo(state, action) {
-      const payload = action.payload.data;
-      if (payload && !payload?.avatar) {
-        payload.avatar = DEFAULT_AVATAR;
-      }
-      return {
-        ...(state as EnterpriseModalState),
-        info: payload || {},
-      };
-    },
     // @ts-ignore
     saveLoginLog(state, action) {
       return {
-        ...(state as EnterpriseModalState),
+        ...(state as CenterModalState),
         logs: state?.logs.concat(action.payload),
         logsCurrent: action.current,
         logsPages: action.pages,
         logsTotal: action.total,
       };
     },
-    saveAvatar(state, action) {
+    /* saveAvatar(state, action) {
       console.log('changeAvatar');
       console.log(state);
       console.log(action);
@@ -100,7 +79,7 @@ const Model: EnterpriseModelType = {
         ...(state as EnterpriseModalState),
         info: { ...state?.info, avatar: action.avatar },
       };
-    },
+    }, */
   },
 };
 

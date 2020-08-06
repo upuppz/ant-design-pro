@@ -1,54 +1,42 @@
 import { HomeOutlined, FieldTimeOutlined, ClusterOutlined, TeamOutlined } from '@ant-design/icons';
-import { Card, Col, Divider, Input, Row, Tag } from 'antd';
-import React, { Component } from 'react';
+import { Card, Col, Divider, Row, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
-import { connect, Dispatch } from 'umi';
-import { RouteChildrenProps } from 'react-router';
-import { EnterpriseModalState } from './model';
+import { useModel } from '@@/plugin-model/useModel';
+
+import { CenterModalState } from '@/pages/account/center/model';
+import { connect } from '@@/plugin-dva/exports';
+import { Dispatch } from '@@/plugin-dva/connect';
 import BaseView from './components/BaseView';
 import LoginLogs from './components/LoginLogs';
-import { EnterpriseInfo } from './data.d';
 import styles from './Center.less';
 import 'antd/es/modal/style';
 
-interface CenterProps extends RouteChildrenProps {
-  dispatch: Dispatch;
-  info: Partial<EnterpriseInfo>;
-  infoLoading: boolean;
-  logsTotal: number;
-}
+type CenterState = 'base' | 'loginLogs' | 'projects';
 
-interface CenterState {
-  tabKey?: 'base' | 'loginLogs' | 'projects';
-}
+const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal, dispatch }) => {
+  const [tabKey, setTabKey] = useState<CenterState>('loginLogs');
+  const { initialState } = useModel('@@initialState');
 
-class Center extends Component<CenterProps, CenterState> {
-  state: CenterState = {
-    tabKey: 'loginLogs',
-  };
-
-  public input: Input | null | undefined = undefined;
-
-  componentDidMount() {
-    const { dispatch } = this.props;
+  useEffect(() => {
     dispatch({
-      type: 'enterprise/info',
+      type: 'center/loginLog',
     });
-    dispatch({
-      type: 'enterprise/loginLog',
-    });
+  }, []);
+
+  if (!initialState) {
+    return null;
   }
 
-  onTabChange = (key: string) => {
-    // If you need to sync state to url
-    // const { match } = this.props;
-    // router.push(`${match.url}/${key}`);
-    this.setState({
-      tabKey: key as CenterState['tabKey'],
-    });
+  const { currentUser } = initialState;
+  const infoLoading = !currentUser || !currentUser.nickname;
+  const dataLoading = infoLoading || !(currentUser && Object.keys(currentUser).length);
+
+  const onTabChange = (key: string) => {
+    setTabKey(key as CenterState);
   };
 
-  renderChildrenByTabKey = (tabKey: CenterState['tabKey']) => {
+  const renderChildrenByTabKey = () => {
     /* if (tabKey === 'projects') {
       return <Projects/>;
     } */
@@ -61,7 +49,7 @@ class Center extends Component<CenterProps, CenterState> {
     return null;
   };
 
-  operationTabList = (logsTotal: number) => {
+  const operationTabList = () => {
     return [
       {
         key: 'loginLogs',
@@ -86,7 +74,7 @@ class Center extends Component<CenterProps, CenterState> {
     ];
   };
 
-  renderUserInfo = (currentUser: Partial<EnterpriseInfo>) => (
+  const renderUserInfo = () => (
     <div className={styles.detail}>
       <p>
         <HomeOutlined
@@ -94,7 +82,7 @@ class Center extends Component<CenterProps, CenterState> {
             marginRight: 8,
           }}
         />
-        {currentUser.buildingName}
+        {currentUser?.buildingName}
       </p>
       <p>
         <ClusterOutlined
@@ -102,7 +90,7 @@ class Center extends Component<CenterProps, CenterState> {
             marginRight: 8,
           }}
         />
-        {currentUser.deptName}
+        {currentUser?.deptName}
       </p>
       <p>
         <FieldTimeOutlined
@@ -110,7 +98,7 @@ class Center extends Component<CenterProps, CenterState> {
             marginRight: 8,
           }}
         />
-        近一次登陆 <Tag>{currentUser.lastLoginTime}</Tag>
+        近一次登陆 <Tag>{currentUser?.lastLoginTime}</Tag>
       </p>
       <p>
         <TeamOutlined
@@ -123,55 +111,40 @@ class Center extends Component<CenterProps, CenterState> {
     </div>
   );
 
-  render() {
-    const { tabKey } = this.state;
-    const { info = {}, infoLoading, logsTotal } = this.props;
-    const dataLoading = infoLoading || !(info && Object.keys(info).length);
-    return (
-      <GridContent>
-        <Row gutter={24}>
-          <Col lg={7} md={24}>
-            <Card bordered={false} style={{ marginBottom: 24 }} loading={dataLoading}>
-              {!dataLoading && (
-                <div>
-                  <div className={styles.avatarHolder}>
-                    <img alt="" src={info.avatar} />
-                    <div className={styles.name}>{info.nickname}</div>
-                    <div>{info.description}</div>
-                  </div>
-                  {this.renderUserInfo(info)}
-                  <Divider dashed />
+  return (
+    <GridContent>
+      <Row gutter={24}>
+        <Col lg={7} md={24}>
+          <Card bordered={false} style={{ marginBottom: 24 }} loading={dataLoading}>
+            {!dataLoading && (
+              <div>
+                <div className={styles.avatarHolder}>
+                  <img alt="" src={currentUser?.avatar} />
+                  <div className={styles.name}>{currentUser?.nickname}</div>
+                  <div>{currentUser?.description}</div>
                 </div>
-              )}
-            </Card>
-          </Col>
-          <Col lg={17} md={24} style={{ width: '100%' }}>
-            <Card
-              bordered={false}
-              tabList={this.operationTabList(logsTotal)}
-              activeTabKey={tabKey}
-              onTabChange={this.onTabChange}
-              style={{ width: '100%' }}
-            >
-              {this.renderChildrenByTabKey(tabKey)}
-            </Card>
-          </Col>
-        </Row>
-      </GridContent>
-    );
-  }
-}
+                {renderUserInfo()}
+                <Divider dashed />
+              </div>
+            )}
+          </Card>
+        </Col>
+        <Col lg={17} md={24} style={{ width: '100%' }}>
+          <Card
+            bordered={false}
+            tabList={operationTabList()}
+            activeTabKey={tabKey}
+            onTabChange={onTabChange}
+            style={{ width: '100%' }}
+          >
+            {renderChildrenByTabKey()}
+          </Card>
+        </Col>
+      </Row>
+    </GridContent>
+  );
+};
 
-export default connect(
-  ({
-    loading,
-    enterprise,
-  }: {
-    loading: { effects: { [key: string]: boolean } };
-    enterprise: EnterpriseModalState;
-  }) => ({
-    info: enterprise.info,
-    logsTotal: enterprise.logsTotal,
-    infoLoading: loading.effects['enterprise/info'],
-  }),
-)(Center);
+export default connect(({ center }: { center: CenterModalState }) => ({
+  logsTotal: center.logsTotal,
+}))(Center);

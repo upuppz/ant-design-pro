@@ -1,11 +1,10 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { message, notification } from 'antd';
+import { message, Modal, notification } from 'antd';
 import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
-// import { queryCurrent } from './services/user';
 import {
   ACCESS_TOKEN,
   AUTHORITIES,
@@ -14,10 +13,12 @@ import {
   SCOPE,
   TOKEN_TYPE,
 } from '@/configs';
+import { CloseCircleOutlined } from '@ant-design/icons';
+import { stringify } from 'querystring';
 import defaultSettings from '../config/defaultSettings';
 
 export const getInitialState = async (): Promise<{
-  currentUser?: API.CurrentUser;
+  currentUser?: API.CurrentUser | undefined;
   settings?: LayoutSettings;
   auth?: API.OAuth;
   hasRoutes?: string[];
@@ -97,6 +98,8 @@ enum ErrorShowType {
   REDIRECT = 9,
 }
 
+let loginModel: any;
+
 export const request: RequestConfig = {
   errorConfig: {
     adaptor: (resData) => {
@@ -124,10 +127,45 @@ export const request: RequestConfig = {
     } else if (response && response.status) {
       const errorText = codeMessage[response.status] || response.statusText;
       const { status, url } = response;
-      notification.error({
-        message: `请求错误 ${status}: ${url}`,
-        description: errorText,
-      });
+      if (status === 401) {
+        if (loginModel == null) {
+          loginModel = Modal.confirm({
+            type: 'error',
+            icon: React.createElement(CloseCircleOutlined, { twoToneColor: 'red' }),
+            title: '认证信息已失效!',
+            content: '您可以继续留在当前页面或重新登陆',
+            okText: '重新登陆',
+            cancelText: '留在当前',
+            onOk() {
+              localStorage.removeItem(ACCESS_TOKEN);
+              localStorage.removeItem(REFRESH_TOKEN);
+              localStorage.removeItem(SCOPE);
+              localStorage.removeItem(TOKEN_TYPE);
+              localStorage.removeItem(EXPIRE_TIME);
+              localStorage.removeItem(AUTHORITIES);
+              // const redirect = parse(window.location.href.split('?')[1]);
+              if (window.location.pathname !== '/user/login') {
+                history.replace({
+                  pathname: '/user/login',
+                  search: stringify({
+                    redirect: window.location.href,
+                  }),
+                });
+              }
+              loginModel.destroy();
+            },
+            onCancel() {
+              loginModel.destroy();
+              loginModel = null;
+            },
+          });
+        }
+      } else {
+        notification.error({
+          message: `请求错误 ${status}: ${url}`,
+          description: errorText,
+        });
+      }
     } else if (!response) {
       notification.error({
         description: '您的网络发生异常，无法连接服务器',

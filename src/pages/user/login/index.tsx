@@ -3,7 +3,6 @@ import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import { Link, SelectLang, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
-import logo from '@/assets/logo.svg';
 import { LoginParamsType, fakeAccountLogin } from '@/services/login';
 import Footer from '@/components/Footer';
 import {
@@ -102,11 +101,11 @@ const Login: React.FC<{}> = () => {
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src={logo} />
-              <span className={styles.title}>Ant Design</span>
+              <img alt="logo" className={styles.logo} src="/logo.svg" />
+              <span className={styles.title}>出入登记管理系统</span>
             </Link>
           </div>
-          <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+          <div className={styles.desc}>广州天河软件园 - 高唐园区</div>
         </div>
 
         <div className={styles.main}>
@@ -187,9 +186,9 @@ const Login: React.FC<{}> = () => {
               <AlipayCircleOutlined className={styles.icon} />
               <TaobaoCircleOutlined className={styles.icon} />
               <WeiboCircleOutlined className={styles.icon} />
-              <Link className={styles.register} to="/user/register">
+              {/* <Link className={styles.register} to="/user/register">
                 注册账户
-              </Link>
+              </Link> */}
             </div>
           </LoginFrom>
         </div>

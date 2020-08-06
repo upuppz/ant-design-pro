@@ -2,7 +2,7 @@ import { Button, Tag, Timeline } from 'antd';
 import React from 'react';
 
 import { connect } from 'umi';
-import { Dispatch } from '@@/plugin-dva/connect';
+import { CenterModalState, Dispatch } from '@@/plugin-dva/connect';
 import {
   DesktopOutlined,
   CloseCircleOutlined,
@@ -13,7 +13,6 @@ import {
   ChromeOutlined,
 } from '@ant-design/icons';
 import { ListItemDataType } from '@/pages/account/center/data';
-import { EnterpriseModalState } from '../../model';
 
 interface LoginLogProps {
   dispatch: Dispatch;
@@ -151,15 +150,15 @@ const Articles: React.FC<LoginLogProps> = ({ logs, dispatch, loading, logsCurren
 
 export default connect(
   ({
-    enterprise,
+    center,
     loading,
   }: {
-    enterprise: EnterpriseModalState;
+    center: CenterModalState;
     loading: { effects: { [key: string]: boolean } };
   }) => ({
-    logs: enterprise.logs,
-    logsCurrent: enterprise.logsCurrent,
-    logsPages: enterprise.logsPages,
+    logs: center.logs,
+    logsCurrent: center.logsCurrent,
+    logsPages: center.logsPages,
     loading: loading.effects['enterprise/loginLog'],
   }),
 )(Articles);
