@@ -14,7 +14,7 @@ const CustomTab = ({
   data: OfflineDataType;
   currentTabKey: string;
 }) => (
-  <Row gutter={8} style={{ width: 138, margin: '8px 0' }} type="flex">
+  <Row gutter={8} style={{ width: 138, margin: '8px 0' }}>
     <Col span={12}>
       <NumberInfo
         title={data.name}

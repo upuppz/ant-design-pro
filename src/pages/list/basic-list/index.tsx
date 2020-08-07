@@ -30,7 +30,7 @@ const { Search } = Input;
 
 interface BasicListProps {
   listAndbasicList: StateType;
-  dispatch: Dispatch<any>;
+  dispatch: Dispatch;
   loading: boolean;
 }
 
@@ -139,7 +139,7 @@ export const BasicList: FC<BasicListProps> = (props) => {
   }> = ({ item }) => (
     <Dropdown
       overlay={
-        <Menu onClick={({ key }) => editAndDelete(key, item)}>
+        <Menu onClick={({ key }) => editAndDelete(key as string, item)}>
           <Menu.Item key="edit">编辑</Menu.Item>
           <Menu.Item key="delete">删除</Menu.Item>
         </Menu>
@@ -179,7 +179,7 @@ export const BasicList: FC<BasicListProps> = (props) => {
     setDone(true);
     dispatch({
       type: 'listAndbasicList/submit',
-      payload: { id, ...values },
+      payload: { ...values, id },
     });
   };
 

@@ -77,7 +77,7 @@ const TopSearch = ({
       height: '100%',
     }}
   >
-    <Row gutter={68} type="flex">
+    <Row gutter={68}>
       <Col sm={12} xs={24} style={{ marginBottom: 24 }}>
         <NumberInfo
           subTitle={
