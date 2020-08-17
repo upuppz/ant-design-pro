@@ -4,12 +4,15 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
 const { REACT_APP_ENV } = process.env;
+
 export default defineConfig({
-  history: { type: 'hash' },
   hash: true,
   antd: {},
   dva: {
     hmr: true,
+  },
+  history: {
+    type: 'hash',
   },
   layout: {
     name: '出入登记管理系统',
@@ -53,7 +56,7 @@ export default defineConfig({
       icon: 'smile',
       component: './Welcome',
       /*access: 'authorityFilter',
-    authority: ['ROLE_ADMIN', 'user'],*/
+      authority: ['ROLE_ADMIN', 'user'],*/
     },
     {
       path: '/upms',

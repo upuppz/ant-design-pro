@@ -55,7 +55,7 @@ export const getInitialState = async (): Promise<{
 export const layout = ({
   initialState,
 }: {
-  initialState: { settings?: LayoutSettings };
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
