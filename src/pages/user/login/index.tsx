@@ -1,10 +1,9 @@
 import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from '@ant-design/icons';
 import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
-import { Link, SelectLang, useModel } from 'umi';
+import { useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import { LoginParamsType, fakeAccountLogin } from '@/services/login';
-import Footer from '@/components/Footer';
 import {
   ACCESS_TOKEN,
   AUTHORITIES,
@@ -53,29 +52,30 @@ const replaceGoto = () => {
   window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/');
 };
 
-const Login: React.FC<{}> = () => {
+const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
   const [submitting, setSubmitting] = useState(false);
 
   const { refresh } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState<string>('2');
+  const [type, setType] = useState<string>('account');
 
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await fakeAccountLogin({ ...values, type });
-      if (msg.access_token) {
+      const ret = await fakeAccountLogin({ ...values, type });
+      if (ret.code === '00000') {
+        const msg = ret.data;
         message.success('登录成功！');
-        localStorage.setItem(ACCESS_TOKEN, msg.access_token);
-        localStorage.setItem(REFRESH_TOKEN, msg.refresh_token);
-        localStorage.setItem(SCOPE, msg.scope);
-        localStorage.setItem(TOKEN_TYPE, msg.token_type);
+        localStorage.setItem(ACCESS_TOKEN, msg[ACCESS_TOKEN]);
+        localStorage.setItem(REFRESH_TOKEN, msg[REFRESH_TOKEN]);
+        localStorage.setItem(SCOPE, msg[SCOPE]);
+        localStorage.setItem(TOKEN_TYPE, msg[TOKEN_TYPE]);
         const current = new Date();
-        const expireTime = current.setTime(current.getTime() + 1000 * msg.expires_in);
+        const expireTime = current.setTime(current.getTime() + 1000 * msg[EXPIRE_TIME]);
         localStorage.setItem(EXPIRE_TIME, expireTime.toString());
-        localStorage.setItem(AUTHORITIES, JSON.stringify(msg.authorities));
+        localStorage.setItem(AUTHORITIES, JSON.stringify(msg[AUTHORITIES]));
         replaceGoto();
         setTimeout(() => {
           refresh();
@@ -93,108 +93,86 @@ const Login: React.FC<{}> = () => {
   const { status, type: loginType } = userLoginState;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.lang}>
-        <SelectLang />
-      </div>
-      <div className={styles.content}>
-        <div className={styles.top}>
-          <div className={styles.header}>
-            <Link to="/">
-              <img alt="logo" className={styles.logo} src="/logo.svg" />
-              <span className={styles.title}>出入登记管理系统</span>
-            </Link>
-          </div>
-          <div className={styles.desc}>广州天河软件园 - 高唐园区</div>
-        </div>
+    <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
+      <Tab key="account" tab="账户密码登录">
+        {status === 'error' && loginType === 'account' && !submitting && (
+          <LoginMessage content="账户或密码错误" />
+        )}
 
-        <div className={styles.main}>
-          <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="2" tab="账户密码登录">
-              {status === 'error' && loginType === '2' && !submitting && (
-                <LoginMessage content="账户或密码错误（admin/1234qwer）" />
-              )}
-
-              <Username
-                name="username"
-                placeholder="用户名: admin or user"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入用户名!',
-                  },
-                ]}
-              />
-              <Password
-                name="password"
-                placeholder="密码: ant.design"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入密码！',
-                  },
-                ]}
-              />
-            </Tab>
-            <Tab key="mobile" tab="手机号登录">
-              {status === 'error' && loginType === 'mobile' && !submitting && (
-                <LoginMessage content="验证码错误" />
-              )}
-              <Mobile
-                name="mobile"
-                placeholder="手机号"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入手机号！',
-                  },
-                  {
-                    pattern: /^1\d{10}$/,
-                    message: '手机号格式错误！',
-                  },
-                ]}
-              />
-              <Captcha
-                name="captcha"
-                placeholder="验证码"
-                countDown={120}
-                getCaptchaButtonText=""
-                getCaptchaSecondText="秒"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入验证码！',
-                  },
-                ]}
-              />
-            </Tab>
-            <div>
-              <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
-                自动登录
-              </Checkbox>
-              <a
-                style={{
-                  float: 'right',
-                }}
-              >
-                忘记密码
-              </a>
-            </div>
-            <Submit loading={submitting}>登录</Submit>
-            <div className={styles.other}>
-              其他登录方式
-              <AlipayCircleOutlined className={styles.icon} />
-              <TaobaoCircleOutlined className={styles.icon} />
-              <WeiboCircleOutlined className={styles.icon} />
-              {/* <Link className={styles.register} to="/user/register">
-                注册账户
-              </Link> */}
-            </div>
-          </LoginFrom>
-        </div>
+        <Username
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: '请输入用户名!',
+            },
+          ]}
+        />
+        <Password
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: '请输入密码！',
+            },
+          ]}
+        />
+      </Tab>
+      <Tab key="mobile" tab="手机号登录">
+        {status === 'error' && loginType === 'mobile' && !submitting && (
+          <LoginMessage content="验证码错误" />
+        )}
+        <Mobile
+          name="mobile"
+          placeholder="手机号"
+          rules={[
+            {
+              required: true,
+              message: '请输入手机号！',
+            },
+            {
+              pattern: /^1\d{10}$/,
+              message: '手机号格式错误！',
+            },
+          ]}
+        />
+        <Captcha
+          name="captcha"
+          placeholder="验证码"
+          countDown={120}
+          getCaptchaButtonText=""
+          getCaptchaSecondText="秒"
+          rules={[
+            {
+              required: true,
+              message: '请输入验证码！',
+            },
+          ]}
+        />
+      </Tab>
+      <div>
+        <Checkbox checked={autoLogin} onChange={(e) => setAutoLogin(e.target.checked)}>
+          自动登录
+        </Checkbox>
+        <a
+          style={{
+            float: 'right',
+          }}
+        >
+          忘记密码
+        </a>
       </div>
-      <Footer />
-    </div>
+      <Submit loading={submitting}>登录</Submit>
+      <div className={styles.other}>
+        其他登录方式
+        <AlipayCircleOutlined className={styles.icon} />
+        <TaobaoCircleOutlined className={styles.icon} />
+        <WeiboCircleOutlined className={styles.icon} />
+        {/* <Link className={styles.register} to="/user/register">
+          注册账户
+        </Link> */}
+      </div>
+    </LoginFrom>
   );
 };
 

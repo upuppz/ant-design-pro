@@ -35,7 +35,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (menu) => {
   const { initialState, setInitialState } = useModel('@@initialState');
 
   useEffect(() => {
-    if (history.location.pathname !== '/user/login') {
+    if (!history.location.pathname.startsWith('/user')) {
       queryCurrent().then((data) => {
         setInitialState({ ...initialState, currentUser: data });
       });

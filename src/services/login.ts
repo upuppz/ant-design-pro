@@ -17,11 +17,8 @@ export async function fakeAccountLogin(params: LoginParamsType) {
   }); */
   return request(AuthApi.login, {
     method: 'POST',
-    data: { ...params, grant_type: 'password', scope: 'all' },
+    data: params,
     requestType: 'form',
-    headers: {
-      Authorization: 'Basic d2l0cGFyay1jbG91ZDoxMjM0NTY=',
-    },
     skipErrorHandler: true,
   });
 }

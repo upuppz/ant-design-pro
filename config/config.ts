@@ -4,7 +4,6 @@ import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -12,21 +11,22 @@ export default defineConfig({
     hmr: true,
   },
   history: {
-    type: 'hash',
+    type: 'browser',
   },
   layout: {
-    name: '出入登记管理系统',
+    name: '智慧食堂管理系统',
     logo: '/logo.svg',
     locale: true,
     siderWidth: 228,
   },
+  /*禁用国际化
   locale: {
     // default zh-CN
     default: 'zh-CN',
     // default true, when it is true, will use `navigator.language` overwrite default
     antd: true,
     baseNavigator: true,
-  },
+  },*/
   dynamicImport: {
     loading: '@/components/PageLoading/index',
   },
@@ -38,11 +38,18 @@ export default defineConfig({
     {
       path: '/user',
       layout: false,
+      component: './user/layout',
       routes: [
         {
-          name: 'login',
+          name: '登陆',
           path: '/user/login',
           component: './user/login',
+        },
+        {
+          name: '注册页',
+          icon: 'smile',
+          path: '/user/register',
+          component: './user/register',
         },
       ],
     },
@@ -52,37 +59,11 @@ export default defineConfig({
     },
     {
       path: '/welcome',
-      name: 'welcome',
+      name: '欢迎',
       icon: 'smile',
       component: './Welcome',
       /*access: 'authorityFilter',
-      authority: ['ROLE_ADMIN', 'user'],*/
-    },
-    {
-      path: '/upms',
-      name: 'upms',
-      icon: 'crown',
-      routes: [
-        {
-          path: '/upms/employee',
-          name: 'employee',
-          icon: 'smile',
-          component: './upms/employee',
-        },
-      ],
-    },
-    {
-      path: '/record',
-      name: 'record',
-      icon: 'crown',
-      routes: [
-        {
-          path: '/record/guest',
-          name: 'guest',
-          icon: 'smile',
-          component: './record/guest',
-        },
-      ],
+    authority: ['ROLE_ADMIN', 'user'],*/
     },
     {
       name: 'account',
@@ -95,6 +76,69 @@ export default defineConfig({
           icon: 'smile',
           path: '/account/center',
           component: './account/center',
+        },
+      ],
+    },
+    {
+      path: '/finance',
+      name: '财务管理',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/finance/wallet',
+          name: '钱包列表',
+          icon: 'smile',
+          component: './finance/wallet',
+        },
+        {
+          path: '/finance/log',
+          name: '资金流水',
+          icon: 'smile',
+          component: './finance/log',
+        },
+        {
+          path: '/finance/income',
+          name: '充值记录',
+          icon: 'smile',
+          component: './finance/income',
+        },
+        {
+          path: '/finance/expenditure',
+          name: '消费记录',
+          icon: 'smile',
+          component: './finance/expenditure',
+        },
+      ],
+    },
+    {
+      path: '/rst',
+      name: '食堂管理',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/rst/rule',
+          name: '消费规则',
+          icon: 'smile',
+          component: './rst/rule',
+        },
+        {
+          name: '人工收费',
+          icon: 'smile',
+          path: '/rst/manual',
+          component: './rst/manual',
+        },
+      ],
+    },
+    {
+      path: '/device',
+      name: '设备管理',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/device/face',
+          name: '人脸设备',
+          icon: 'smile',
+          component: './device/face',
         },
       ],
     },

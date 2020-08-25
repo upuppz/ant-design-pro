@@ -69,7 +69,7 @@ const GlobalHeaderRight: React.FC = () => {
         </span>
       )}
       <span>
-        <Tag color="green">企业版</Tag>
+        <Tag color="green">食堂版</Tag>
       </span>
       {/* <SelectLang className={styles.action}/> */}
     </Space>

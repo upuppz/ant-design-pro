@@ -7,7 +7,7 @@ import { UpmsApi } from '@/apis';
 } */
 
 export async function queryCurrent() {
-  const res = await request<API.Ret<API.CurrentUser>>(UpmsApi.enterprise);
+  const res = await request<API.Ret<API.CurrentUser>>(UpmsApi.current);
   if (res.data && !res.data?.avatar) {
     res.data.avatar = DEFAULT_AVATAR;
   }

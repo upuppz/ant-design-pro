@@ -7,42 +7,47 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://proapi.azurewebsites.net',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-    '/auth/': {
+    // '/api/': {
+    //   target: 'https://proapi.azurewebsites.net',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
+    '/api/auth/': {
       target: 'http://localhost:10001',
       changeOrigin: true,
-      pathRewrite: { '^/auth': '' },
+      pathRewrite: { '^/api/auth': '' },
     },
-    '/upms/': {
+    '/api/upms/': {
       target: 'http://localhost:10002',
       changeOrigin: true,
-      pathRewrite: { '^/upms': '' },
+      pathRewrite: { '^/api/upms': '' },
     },
-    '/guests/': {
+    '/api/guest/': {
       target: 'http://localhost:10003',
       changeOrigin: true,
-      pathRewrite: { '^/guests': '' },
+      pathRewrite: { '^/api/guest': '' },
     },
-    '/devices/': {
+    '/api/device/': {
       target: 'http://localhost:10004',
       changeOrigin: true,
-      pathRewrite: { '^/devices': '' },
+      pathRewrite: { '^/api/device': '' },
+    },
+    '/api/rst/': {
+      target: 'http://localhost:10005',
+      changeOrigin: true,
+      pathRewrite: { '^/api/rst': '' },
     },
   },
   test: {
     '/api/': {
-      target: 'https://proapi.azurewebsites.net',
+      target: 'http://localhost:10000',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
   pre: {
     '/api/': {
-      target: 'your pre url',
+      target: 'https://proapi.azurewebsites.net',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

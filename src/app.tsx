@@ -24,7 +24,8 @@ export const getInitialState = async (): Promise<{
   hasRoutes?: string[];
 }> => {
   // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  // if (history.location.pathname !== '/user/login') {
+  if (!history.location.pathname.startsWith('/user')) {
     /* try { */
     // const currentUser = await queryCurrent();
     const accessToken = localStorage.getItem(ACCESS_TOKEN);
@@ -243,7 +244,7 @@ export const request: RequestConfig = {
   ],
   requestInterceptors: [
     (url, options) => {
-      const accessToken = localStorage.getItem('access_token');
+      const accessToken = localStorage.getItem(ACCESS_TOKEN);
       if (accessToken) {
         // eslint-disable-next-line no-param-reassign
         options.headers = { Authorization: `Bearer ${accessToken}` };
