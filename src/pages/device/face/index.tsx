@@ -1,40 +1,29 @@
 import {
   DownOutlined,
-  PlusOutlined,
   EditFilled,
-  ThunderboltFilled,
   InteractionFilled,
+  PlusOutlined,
+  ThunderboltFilled,
 } from '@ant-design/icons';
-import { Button, Dropdown, Menu, message, Input, Tooltip, TreeSelect, notification } from 'antd';
-import React, { useState, useRef, useEffect } from 'react';
+import { Button, Dropdown, Input, Menu, message, Tooltip, TreeSelect } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
 
 import { listBuildingTree } from '@/services/upms';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { TableListItem } from './data';
-import { list, update, add, remove, test, syncPerson } from './service';
+import { add, list, remove, syncPerson, test, update } from './service';
 
 /**
  *
  * @param id
  */
-const handleSyncPerson = (id: number | undefined) => {
+const handleSyncPerson = async (id: number | undefined) => {
   const hide = message.loading('连接设备中,请稍等...', 0);
-  syncPerson(id)
-    .then((res) => {
-      notification.success({
-        message: res.data,
-      });
-      hide();
-    })
-    .catch(() => {
-      notification.error({
-        message: '同步失败',
-      });
-      hide();
-    });
+  await syncPerson(id);
+  hide();
 };
 
 /**

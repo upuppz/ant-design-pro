@@ -1,6 +1,6 @@
-import request from 'umi-request';
+import { request } from 'umi';
 import { DeviceApi } from '@/apis';
-import { TableListParams, TableListItem } from './data';
+import { TableListItem, TableListParams } from './data';
 
 export async function list(params?: TableListParams) {
   // eslint-disable-next-line no-return-await

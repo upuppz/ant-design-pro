@@ -1,14 +1,15 @@
-FROM circleci/node:latest-browsers
+FROM nginx:latest
 
-WORKDIR /usr/src/app/
-USER root
-COPY package.json ./
-RUN yarn
+ENV RUN_USER nginx
+ENV RUN_GROUP nginx
 
-COPY ./ ./
+ENV TZ=Asia/Shanghai
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN npm run test:all
 
-RUN npm run fetch:blocks
+COPY ./dist /usr/share/nginx/html
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["npm", "run", "build"]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

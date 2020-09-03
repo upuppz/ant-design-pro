@@ -1,4 +1,4 @@
-import request from 'umi-request';
+import { request } from 'umi';
 import { UpmsApi } from '@/apis';
 import { TableListParams } from './data';
 
@@ -9,7 +9,8 @@ export async function dtoPage(params?: TableListParams) {
 }
 
 export async function topUp(params: { targetId: number; fee: number }) {
-  return request.post(`${UpmsApi.wallet}/topUp`, {
+  return request(`${UpmsApi.wallet}/topUp`, {
+    method: 'POST',
     data: params,
   });
 }
@@ -21,7 +22,8 @@ export async function like(text: string) {
 }
 
 export async function manual(data: any) {
-  return request.post(`${UpmsApi.wallet}/deduction/manual`, {
+  return request(`${UpmsApi.wallet}/deduction/manual`, {
+    method: 'POST',
     data,
   });
 }

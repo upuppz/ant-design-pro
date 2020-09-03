@@ -19,6 +19,7 @@ export default defineConfig({
     locale: true,
     siderWidth: 228,
   },
+
   /*禁用国际化
   locale: {
     // default zh-CN
@@ -127,6 +128,12 @@ export default defineConfig({
           path: '/rst/manual',
           component: './rst/manual',
         },
+        {
+          name: '额外收费项',
+          icon: 'smile',
+          path: '/rst/extra-cost',
+          component: './rst/extra-cost',
+        },
       ],
     },
     {
@@ -151,7 +158,6 @@ export default defineConfig({
     // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
   },
-  // @ts-ignore
   title: false,
   ignoreMomentLocale: true,
   proxy: proxy[REACT_APP_ENV || 'dev'],

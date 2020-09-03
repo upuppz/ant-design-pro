@@ -4,7 +4,7 @@ import { message, Modal, notification } from 'antd';
 import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { ResponseError } from 'umi-request';
+
 import {
   ACCESS_TOKEN,
   AUTHORITIES,
@@ -111,7 +111,7 @@ export const request: RequestConfig = {
   /**
    * 异常处理程序
    */
-  errorHandler: (error: ResponseError) => {
+  errorHandler: (error: RequestError) => {
     const { response } = error;
     if (error.name === 'BizError') {
       const { code, data } = error.data;

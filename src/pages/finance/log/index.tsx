@@ -103,7 +103,7 @@ export default () => {
       title: '创建时间',
       dataIndex: 'createdAt',
       sorter: true,
-      hideInSearch: true,
+      hideInForm: true,
     },
   ];
 

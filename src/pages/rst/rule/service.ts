@@ -1,4 +1,4 @@
-import request from 'umi-request';
+import { request } from 'umi';
 import { RstApi } from '@/apis';
 import { DiningRule } from './data';
 
@@ -7,5 +7,5 @@ export async function list() {
 }
 
 export async function save(data: Array<DiningRule>[]) {
-  return request.post(RstApi.rule, { data });
+  return request(RstApi.rule, { method: 'POST', data });
 }

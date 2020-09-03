@@ -74,7 +74,6 @@
     "react-helmet-async": "^1.0.4",
     "react-router": "^4.3.1",
     "umi": "^3.1.2",
-    "umi-request": "^1.0.8",
     "use-merge-value": "^1.0.1"
   },
   "devDependencies": {
