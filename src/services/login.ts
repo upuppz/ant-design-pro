@@ -20,7 +20,7 @@ export async function fakeAccountLogin(params: LoginParamsType) {
     data: { ...params, grant_type: 'password', scope: 'all' },
     requestType: 'form',
     headers: {
-      Authorization: 'Basic d2l0cGFyay1jbG91ZDoxMjM0NTY=',
+      Authorization: 'Basic d2l0cGFyay1jbG91ZDpNZyh+Ry5IPUdkUWYrbW5L',
     },
     skipErrorHandler: true,
   });

@@ -53,19 +53,20 @@ const replaceGoto = () => {
   window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/');
 };
 
-const Login: React.FC<{}> = () => {
+const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
   const [submitting, setSubmitting] = useState(false);
 
   const { refresh } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState<string>('2');
+  const [type, setType] = useState<string>('0');
 
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await fakeAccountLogin({ ...values, type });
+
+      const msg = await fakeAccountLogin({ ...values, username: `${type}:${values.username}` });
       if (msg.access_token) {
         message.success('登录成功！');
         localStorage.setItem(ACCESS_TOKEN, msg.access_token);
@@ -110,8 +111,8 @@ const Login: React.FC<{}> = () => {
 
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="2" tab="账户密码登录">
-              {status === 'error' && loginType === '2' && !submitting && (
+            <Tab key="0" tab="账户密码登录">
+              {status === 'error' && loginType === '0' && !submitting && (
                 <LoginMessage content="账户或密码错误（admin/1234qwer）" />
               )}
 
