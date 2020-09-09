@@ -150,7 +150,7 @@ const customDot = (
   if (status === 'process') {
     return (
       <Popover placement="topLeft" arrowPointAtCenter content={popoverContent}>
-        {dot}
+        <>{dot}</>
       </Popover>
     );
   }
@@ -212,7 +212,7 @@ interface AdvancedState {
 }
 
 class Advanced extends Component<
-  { loading: boolean; profileAndadvanced: AdvancedProfileData; dispatch: Dispatch<any> },
+  { loading: boolean; profileAndadvanced: AdvancedProfileData; dispatch: Dispatch },
   AdvancedState
 > {
   public state: AdvancedState = {
