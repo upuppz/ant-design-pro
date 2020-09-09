@@ -100,4 +100,12 @@ export const RstApi = {
    * 收费规则
    */
   rule: `${RST_BASE}/rule`,
+  /**
+   * 额外收费项
+   */
+  extraCost: `${RST_BASE}/extraCost`,
+  /**
+   * 陌生人记录
+   */
+  strangerLog: `${RST_BASE}/strangerLog`,
 };

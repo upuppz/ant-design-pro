@@ -7,3 +7,11 @@ export async function dtoPage(params?: TableListParams) {
     params,
   });
 }
+
+export async function refund(data: { id: number; reason?: string }) {
+  return request(`${UpmsApi.walletExpenditure}/${data.id}/refund`, {
+    method: 'POST',
+    requestType: 'form',
+    data,
+  });
+}

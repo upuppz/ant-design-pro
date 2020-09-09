@@ -4,7 +4,9 @@ export interface TableListItem {
   targetType: number;
   fee: number;
   balance: number;
+  refundId: number;
   remark: string;
+  extraCost: string;
   deptName: string;
   username: string;
   nickname: string;

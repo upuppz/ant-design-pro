@@ -61,7 +61,6 @@ const handleAdd = async (fields: TableListItem) => {
     hide();
     return true;
   } catch (error) {
-    console.error(error);
     hide();
     message.error('添加失败请重试！');
     return false;
@@ -557,7 +556,6 @@ const TableList: React.FC = () => {
       >
         <ProTable<TableListItem, TableListItem>
           onSubmit={async (value) => {
-            console.log(selectBuildingName);
             const success = await handleAdd({
               ...value,
               buildingName: selectBuildingName,

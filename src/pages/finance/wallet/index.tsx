@@ -165,7 +165,7 @@ export default () => {
           form={form}
           onFinish={(values) => {
             setBtnLoading(true);
-            topUp({ targetId: walletValues.walletId, fee: values.fee })
+            topUp({ targetId: walletValues.walletId, fee: values.fee, remark: values.remark })
               .then((res) => {
                 if (res.code === '00000') {
                   setBtnLoading(false);
@@ -212,6 +212,13 @@ export default () => {
               min={1}
               /* parser={value => value?.replace(/\$\s?|(,*)/g, '')} */
             />
+          </Form.Item>
+          <Form.Item
+            label="备注"
+            name="remark"
+            rules={[{ max: 255, message: '最多不能超过255个字符' }]}
+          >
+            <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
       </Modal>

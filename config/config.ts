@@ -16,18 +16,16 @@ export default defineConfig({
   layout: {
     name: '智慧食堂管理系统',
     logo: '/logo.svg',
-    locale: true,
+    locale: false,
     siderWidth: 228,
   },
-
-  /*禁用国际化
   locale: {
-    // default zh-CN
     default: 'zh-CN',
-    // default true, when it is true, will use `navigator.language` overwrite default
-    antd: true,
+    antd: false,
+    title: false,
     baseNavigator: true,
-  },*/
+    baseSeparator: '-',
+  },
   dynamicImport: {
     loading: '@/components/PageLoading/index',
   },
@@ -99,7 +97,7 @@ export default defineConfig({
         },
         {
           path: '/finance/income',
-          name: '充值记录',
+          name: '入账记录',
           icon: 'smile',
           component: './finance/income',
         },
@@ -133,6 +131,12 @@ export default defineConfig({
           icon: 'smile',
           path: '/rst/extra-cost',
           component: './rst/extra-cost',
+        },
+        {
+          name: '陌生人记录',
+          icon: 'smile',
+          path: '/rst/stranger-log',
+          component: './rst/stranger-log',
         },
       ],
     },

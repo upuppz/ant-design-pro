@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
-import { Tag, TreeSelect } from 'antd';
+import { Badge, Tag, TreeSelect } from 'antd';
 import { listDeptTree } from '@/services/upms';
 import { TableListItem } from './data';
 import { dtoPage } from './service';
@@ -71,13 +71,34 @@ export default () => {
       title: '业务类型',
       align: 'center',
       dataIndex: 'targetType',
-      valueEnum: {
-        0: { text: '其它', status: 'Default' },
-        1: { text: '后台充值', status: 'Error' },
-        2: { text: '微信充值', status: 'Processing' },
-        3: { text: '支付宝充值', status: 'Warning' },
-        8: { text: '人工扣费', status: 'Warning' },
-        9: { text: '食堂消费', status: 'Success' },
+      render: (text, row) => {
+        if (row.type === 0) {
+          // 支出
+          switch (text) {
+            case 1:
+              return <Badge status="success" text="食堂-IC卡扣费" />;
+            case 2:
+              return <Badge status="error" text="食堂-人工扣费" />;
+            case 3:
+              return <Badge status="processing" text="食堂-人脸消费" />;
+            default:
+              return <Badge status="default" text="其它" />;
+          }
+        } else {
+          // 收入
+          switch (text) {
+            case 1:
+              return <Badge status="success" text="后台充值" />;
+            case 2:
+              return <Badge status="error" text="微信充值" />;
+            case 3:
+              return <Badge status="processing" text="支付宝充值" />;
+            case 4:
+              return <Badge status="warning" text="退款" />;
+            default:
+              return <Badge status="default" text="其它" />;
+          }
+        }
       },
     },
     {
@@ -113,7 +134,9 @@ export default () => {
         headerTitle="查询表格"
         rowKey="id"
         columns={columns}
-        request={(params, sorter, filter) => dtoPage({ ...params, sorter, filter })}
+        request={(params, sorter, filter) =>
+          dtoPage({ ...params, sorter: { createdAt: 'descend', ...sorter }, filter })
+        }
       />
     </PageHeaderWrapper>
   );

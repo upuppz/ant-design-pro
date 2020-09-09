@@ -10,7 +10,7 @@ export default {
   fixSiderbar: true,
   colorWeak: false,
   menu: {
-    locale: true,
+    locale: false,
   },
   title: '智慧食堂管理系统',
   pwa: true,

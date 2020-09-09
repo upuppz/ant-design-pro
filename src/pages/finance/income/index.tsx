@@ -65,9 +65,9 @@ export default () => {
       valueEnum: {
         0: { text: '其它', status: 'Default' },
         1: { text: '后台充值', status: 'Error' },
-        2: { text: '微信充值', status: 'Processing' },
+        2: { text: '微信充值', status: 'Success' },
         3: { text: '支付宝充值', status: 'Warning' },
-        9: { text: '食堂消费', status: 'Success' },
+        4: { text: '退款', status: 'Processing' },
       },
     },
     {
@@ -103,7 +103,9 @@ export default () => {
         headerTitle="查询表格"
         rowKey="id"
         columns={columns}
-        request={(params, sorter, filter) => dtoPage({ ...params, sorter, filter })}
+        request={(params, sorter, filter) =>
+          dtoPage({ ...params, sorter: { createdAt: 'descend', ...sorter }, filter })
+        }
       />
     </PageHeaderWrapper>
   );

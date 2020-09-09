@@ -1,6 +1,6 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { message, Modal, notification } from 'antd';
+import { message, Modal, notification, Row } from 'antd';
 import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
@@ -111,15 +111,21 @@ export const request: RequestConfig = {
   /**
    * 异常处理程序
    */
-  errorHandler: (error: RequestError) => {
+  errorHandler: (error: any) => {
     const { response } = error;
     if (error.name === 'BizError') {
-      const { code, data } = error.data;
+      const { code, data, msg } = error.data;
       if (code !== '00000') {
         // 全局通用错误处理
         switch (code) {
-          case 'A0101':
-            console.log(data);
+          // 统一参数校验未通过错误提示
+          case 'A0100':
+            if (Array.isArray(data)) {
+              notification.error({
+                message: msg,
+                description: [data.map((value) => <Row>{value.message}</Row>)],
+              });
+            }
             break;
           default:
         }

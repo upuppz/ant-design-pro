@@ -8,7 +8,7 @@ export async function dtoPage(params?: TableListParams) {
   });
 }
 
-export async function topUp(params: { targetId: number; fee: number }) {
+export async function topUp(params: { targetId: number; fee: number; remark: string }) {
   return request(`${UpmsApi.wallet}/topUp`, {
     method: 'POST',
     data: params,

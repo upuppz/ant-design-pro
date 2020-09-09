@@ -11,6 +11,7 @@ import {
   notification,
   Spin,
   Empty,
+  Checkbox,
 } from 'antd';
 import React, { FC } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -18,27 +19,29 @@ import { LikeItem } from '@/pages/finance/wallet/data';
 import moment from 'moment';
 import debounce from 'lodash/debounce';
 import { like } from '@/pages/finance/wallet/service';
+import { TableListItem } from '@/pages/rst/extra-cost/data';
 import { DiningRule } from '../rule/data';
 import { list as ruleList } from '../rule/service';
 import styles from './style.less';
 import { manual } from './service';
-
-const FormItem = Form.Item;
-const { Option } = Select;
+import { all } from '../extra-cost/service';
 
 const dateFormat = 'YYYY-MM-DD';
 
 const Toll: FC = () => {
   const [form] = Form.useForm();
-  const [hidePackaging, setHidePackaging] = React.useState(true);
   const [ruleOption, setRuleOption] = React.useState<DiningRule[]>([]);
   const [users, setUsers] = React.useState<LikeItem[]>([]);
+  const [extraCosts, setExtraCosts] = React.useState<TableListItem[]>([]);
   const [userLoading, setUserLoading] = React.useState(false);
   const [submitLoading, setSubmitLoading] = React.useState(false);
 
   React.useEffect(() => {
     ruleList().then((res) => {
       setRuleOption(res.data);
+    });
+    all().then((res) => {
+      setExtraCosts(res.data);
     });
   }, []);
 
@@ -64,16 +67,13 @@ const Toll: FC = () => {
   const onFinish = (values: { [key: string]: any }) => {
     setSubmitLoading(true);
     manual({ ...values, date: values.date.format(dateFormat) })
-      .then((res) => {
-        if (res.code === '00000') {
-          notification.success({ message: '扣费成功' });
-          form.resetFields(['ids']);
-        } else {
-          notification.error({ message: res.msg, description: res.data });
-        }
+      .then(() => {
+        notification.success({ message: '扣费成功' });
+        form.resetFields(['ids']);
         setSubmitLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        notification.error({ message: err.data.data, description: err.data.msg });
         setSubmitLoading(false);
       });
   };
@@ -81,11 +81,6 @@ const Toll: FC = () => {
   const onFinishFailed = (errorInfo: any) => {
     // eslint-disable-next-line no-console
     console.error('Failed:', errorInfo);
-  };
-
-  const onValuesChange = (changedValues: { [key: string]: any }) => {
-    const { ruleId } = changedValues;
-    setHidePackaging(ruleId === 0);
   };
 
   const onSearch = debounce((value: string) => {
@@ -108,12 +103,11 @@ const Toll: FC = () => {
           style={{ marginTop: 8 }}
           form={form}
           name="toll"
-          initialValues={{ date: moment(), ruleId: 0, packaging: 1 }}
+          initialValues={{ date: moment(), ruleId: 0 }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          onValuesChange={onValuesChange}
         >
-          <FormItem
+          <Form.Item
             {...formItemLayout}
             label={
               <Space>
@@ -147,14 +141,14 @@ const Toll: FC = () => {
             >
               {users.map((item) => {
                 return (
-                  <Option key={item.userId} value={item.userId} label={item.userId}>
+                  <Select.Option key={item.userId} value={item.userId} label={item.userId}>
                     {item.userId} / {item.nickname} / {item.mobile} / {item.deptName}
-                  </Option>
+                  </Select.Option>
                 );
               })}
             </Select>
-          </FormItem>
-          <FormItem
+          </Form.Item>
+          <Form.Item
             {...formItemLayout}
             label="消费日期"
             name="date"
@@ -170,8 +164,8 @@ const Toll: FC = () => {
               style={{ width: '100%' }}
               placeholder="请选择消费日期"
             />
-          </FormItem>
-          <FormItem
+          </Form.Item>
+          <Form.Item
             {...formItemLayout}
             label={
               <Space>
@@ -186,31 +180,33 @@ const Toll: FC = () => {
             }
             name="ruleId"
           >
-            <Radio.Group>
-              <Radio value={0}>只收包装费</Radio>
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value={0}>单独收取包装费</Radio.Button>
               {ruleOption && ruleOption.length > 0
                 ? ruleOption.map((field) => {
                     return (
-                      <Radio key={field.id} value={field.id}>
+                      <Radio.Button key={field.id} value={field.id}>
                         {field.name}
-                      </Radio>
+                      </Radio.Button>
                     );
                   })
                 : null}
             </Radio.Group>
-          </FormItem>
-          <FormItem {...formItemLayout} label="包装费" name="packaging">
-            <Radio.Group>
-              <Radio value={1}>包装费</Radio>
-              {!hidePackaging ? <Radio value={0}>无包装费</Radio> : null}
-            </Radio.Group>
-          </FormItem>
-
-          <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
+          </Form.Item>
+          <Form.Item {...formItemLayout} name="extraCost" label="包装费">
+            <Checkbox.Group>
+              {extraCosts.map((value) => (
+                <Checkbox key={value.id} value={value.id}>
+                  {value.name}
+                </Checkbox>
+              ))}
+            </Checkbox.Group>
+          </Form.Item>
+          <Form.Item {...submitFormLayout} style={{ marginTop: 32 }}>
             <Button type="primary" htmlType="submit" loading={submitLoading}>
               提交
             </Button>
-          </FormItem>
+          </Form.Item>
         </Form>
       </Card>
     </PageHeaderWrapper>
