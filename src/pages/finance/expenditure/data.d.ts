@@ -4,7 +4,7 @@ export interface TableListItem {
   targetType: number;
   fee: number;
   balance: number;
-  refundId: number;
+  relatedId: number;
   remark: string;
   extraCost: string;
   deptName: string;

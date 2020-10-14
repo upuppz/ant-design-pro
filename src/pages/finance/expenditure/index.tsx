@@ -132,7 +132,7 @@ export default () => {
       valueType: 'option',
       render: (_, record) => (
         <Space>
-          {_ === 0 ? (
+          {record.relatedId === 0 ? (
             <Button
               type="primary"
               onClick={() => {
@@ -183,15 +183,16 @@ export default () => {
             setRefundLoading(true);
             refundReq({ id: values.id, reason: values.reason })
               .then(() => {
-                if (actionRef.current) {
-                  actionRef.current.reloadAndRest();
-                }
                 notification.success({
                   message: '退款成功',
                   description: `已成功为该记录退款`,
                 });
                 setRefundLoading(false);
                 setRefundVisible(false);
+                if (actionRef.current) {
+                  // @ts-ignore
+                  actionRef.current.reloadAndRest();
+                }
               })
               .catch((err) => {
                 setRefundVisible(false);

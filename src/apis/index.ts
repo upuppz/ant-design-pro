@@ -1,19 +1,4 @@
 /**
- * 验证功能相关
- */
-export const AuthApi = {
-  /**
-   * 登录API
-   */
-  login: '/api/rst/user/login',
-
-  /**
-   * 登出API
-   */
-  logout: '/api/auth/logout',
-};
-
-/**
  * 用户权限管理相关
  */
 const UPMS_BASE = '/api/upms';
@@ -92,6 +77,14 @@ export const DeviceApi = {
  */
 const RST_BASE = '/api/rst';
 export const RstApi = {
+  /**
+   * 欢迎页 - 统计数据
+   */
+  ANALYSIS: `${RST_BASE}/analysis`,
+  /**
+   * 欢迎页 - 趋势数据
+   */
+  ANALYSIS_TREND: `${RST_BASE}/analysis/trend`,
   /**
    * 收费
    */

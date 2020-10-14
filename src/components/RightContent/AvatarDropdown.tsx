@@ -2,10 +2,8 @@ import React, { useCallback, useEffect } from 'react';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { history, useModel } from 'umi';
-import { getPageQuery } from '@/utils/utils';
-import { outLogin } from '@/services/login';
-import { stringify } from 'querystring';
 import { queryCurrent } from '@/services/user';
+import { ACCESS_TOKEN } from '@/configs';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -16,19 +14,11 @@ export interface GlobalHeaderRightProps {
 /**
  * 退出登录，并且将当前的 url 保存
  */
-const loginOut = async () => {
-  await outLogin();
+const loginOut = () => {
+  const accessToken = localStorage.getItem(ACCESS_TOKEN);
+  // @ts-ignore
+  window.location.href = `${UAA.uri}logout?${ACCESS_TOKEN}=${accessToken}`;
   localStorage.clear();
-  const { redirect } = getPageQuery();
-  // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
-    history.replace({
-      pathname: '/user/login',
-      search: stringify({
-        redirect: window.location.href,
-      }),
-    });
-  }
 };
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = (menu) => {

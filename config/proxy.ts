@@ -7,11 +7,11 @@
  */
 export default {
   dev: {
-    // '/api/': {
-    //   target: 'https://proapi.azurewebsites.net',
-    //   changeOrigin: true,
-    //   pathRewrite: { '^': '' },
-    // },
+    '/api/fake_chart_data': {
+      target: 'https://proapi.azurewebsites.net',
+      changeOrigin: true,
+      pathRewrite: { '^': '' },
+    },
     '/api/auth/': {
       target: 'http://localhost:10001',
       changeOrigin: true,

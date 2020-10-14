@@ -5,17 +5,21 @@ import { history, RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 
-import {
-  ACCESS_TOKEN,
-  AUTHORITIES,
-  EXPIRE_TIME,
-  REFRESH_TOKEN,
-  SCOPE,
-  TOKEN_TYPE,
-} from '@/configs';
+import { ACCESS_TOKEN, AUTHORITIES, EXPIRE_TIME, GOTO, REFRESH_TOKEN, TOKEN_TYPE } from '@/configs';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { stringify } from 'querystring';
+import { parse } from 'querystring';
 import defaultSettings from '../config/defaultSettings';
+
+function gotoCertification() {
+  localStorage.clear();
+  localStorage.setItem(
+    GOTO,
+    window.location.pathname + window.location.search + window.location.hash,
+  );
+  // @ts-ignore
+  window.location.href = `${UAA.uri}oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=all`;
+  return {};
+}
 
 export const getInitialState = async (): Promise<{
   currentUser?: API.CurrentUser | undefined;
@@ -23,34 +27,61 @@ export const getInitialState = async (): Promise<{
   auth?: API.OAuth;
   hasRoutes?: string[];
 }> => {
-  // 如果是登录页面，不执行
-  // if (history.location.pathname !== '/user/login') {
-  if (!history.location.pathname.startsWith('/user')) {
-    /* try { */
-    // const currentUser = await queryCurrent();
-    const accessToken = localStorage.getItem(ACCESS_TOKEN);
-    if (accessToken) {
-      const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-      const tokenType = localStorage.getItem(TOKEN_TYPE);
-      const expiresIn = localStorage.getItem(EXPIRE_TIME);
-      const scope = localStorage.getItem(SCOPE);
-      const authorities = JSON.parse(localStorage.getItem(AUTHORITIES) as string);
+  let accessToken = localStorage.getItem(ACCESS_TOKEN);
+  if (accessToken) {
+    const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+    const tokenType = localStorage.getItem(TOKEN_TYPE);
+    const expiresIn = localStorage.getItem(EXPIRE_TIME);
+    const authorities = JSON.parse(localStorage.getItem(AUTHORITIES) as string);
+    return {
+      // currentUser,
+      auth: { accessToken, refreshToken, tokenType, expiresIn },
+      hasRoutes: authorities,
+      settings: defaultSettings,
+    };
+  }
+
+  if (history.location.pathname === '/') {
+    const msg = parse(history.location.hash.substring(1));
+    if (msg && Object.keys(msg).length > 0) {
+      accessToken = msg[ACCESS_TOKEN] as string;
+      localStorage.setItem(ACCESS_TOKEN, accessToken);
+      const refreshToken = msg[REFRESH_TOKEN] as string;
+      localStorage.setItem(REFRESH_TOKEN, refreshToken);
+      const tokenType = msg[TOKEN_TYPE] as string;
+      localStorage.setItem(TOKEN_TYPE, tokenType);
+      const current = new Date();
+      const expireTime = current.setTime(
+        current.getTime() + 1000 * parseInt(msg[EXPIRE_TIME] as string, 10),
+      );
+      localStorage.setItem(EXPIRE_TIME, expireTime.toString());
+      const authoritiesStr = msg[AUTHORITIES] as string;
+      const authorities = authoritiesStr.match(/(\w+:?)+/g);
+      localStorage.setItem(AUTHORITIES, JSON.stringify(authorities));
+      const goto = localStorage.getItem(GOTO);
+      if (goto && history.location.pathname !== goto) {
+        history.push(goto);
+      }
       return {
         // currentUser,
-        auth: { accessToken, refreshToken, tokenType, expiresIn, scope },
-        hasRoutes: authorities,
+        auth: { accessToken, refreshToken, tokenType, expiresIn: expireTime.toString() },
+        hasRoutes: authorities as string[],
         settings: defaultSettings,
       };
     }
-
-    history.push('/user/login');
-    /* } catch (error) {
-      history.push('/user/login');
-    } */
   }
-  return {
-    settings: defaultSettings,
-  };
+
+  // 如果是登录页面，不执行
+  // if (history.location.pathname !== '/user/login') {
+  // if (!history.location.pathname.startsWith('/user')) {
+  /* try { */
+  // const currentUser = await queryCurrent();
+  // history.push('/user/login');
+  /* } catch (error) {
+    history.push('/user/login');
+  } */
+  // }
+  return gotoCertification();
 };
 
 export const layout = ({
@@ -144,22 +175,7 @@ export const request: RequestConfig = {
             okText: '重新登陆',
             cancelText: '留在当前',
             onOk() {
-              localStorage.removeItem(ACCESS_TOKEN);
-              localStorage.removeItem(REFRESH_TOKEN);
-              localStorage.removeItem(SCOPE);
-              localStorage.removeItem(TOKEN_TYPE);
-              localStorage.removeItem(EXPIRE_TIME);
-              localStorage.removeItem(AUTHORITIES);
-              // const redirect = parse(window.location.href.split('?')[1]);
-              if (window.location.pathname !== '/user/login') {
-                history.replace({
-                  pathname: '/user/login',
-                  search: stringify({
-                    redirect: window.location.href,
-                  }),
-                });
-              }
-              loginModel.destroy();
+              gotoCertification();
             },
             onCancel() {
               loginModel.destroy();
@@ -251,9 +267,10 @@ export const request: RequestConfig = {
   requestInterceptors: [
     (url, options) => {
       const accessToken = localStorage.getItem(ACCESS_TOKEN);
+      const tokenType = localStorage.getItem(TOKEN_TYPE);
       if (accessToken) {
         // eslint-disable-next-line no-param-reassign
-        options.headers = { Authorization: `Bearer ${accessToken}` };
+        options.headers = { Authorization: `${tokenType} ${accessToken}` };
       }
       return { url, options };
     },

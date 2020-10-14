@@ -35,24 +35,6 @@ export default defineConfig({
   // umi routes: https://umijs.org/docs/routing
   routes: [
     {
-      path: '/user',
-      layout: false,
-      component: './user/layout',
-      routes: [
-        {
-          name: '登陆',
-          path: '/user/login',
-          component: './user/login',
-        },
-        {
-          name: '注册页',
-          icon: 'smile',
-          path: '/user/register',
-          component: './user/register',
-        },
-      ],
-    },
-    {
       path: '/',
       redirect: '/welcome',
     },
@@ -60,9 +42,10 @@ export default defineConfig({
       path: '/welcome',
       name: '欢迎',
       icon: 'smile',
-      component: './Welcome',
+      component: './welcome',
       /*access: 'authorityFilter',
-    authority: ['ROLE_ADMIN', 'user'],*/
+        authority: ['ROLE_ADMIN', 'user'],
+        */
     },
     {
       name: 'account',
