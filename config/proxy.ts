@@ -12,6 +12,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
+    '/upms/': {
+      target: 'http://localhost:10000',
+      changeOrigin: true,
+      pathRewrite: { '^': '' },
+    },
   },
   test: {
     '/api/': {

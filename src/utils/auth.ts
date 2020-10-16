@@ -38,8 +38,7 @@ const EXPIRE_IN: string = 'expires_in';
  */
 const GOTO: string = 'goto';
 
-
-export function getAccessToken(): AUTH.OAuth2AccessToken {
+export function getValidAccessToken(): AUTH.OAuth2AccessToken {
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
   // const refreshToken = localStorage.getItem(REFRESH_TOKEN);
   const tokenType = localStorage.getItem(TOKEN_TYPE);
@@ -63,8 +62,8 @@ export function setAccessToken(model: AUTH.OAuth2AccessToken): void {
   // if (model[REFRESH_TOKEN]) localStorage.setItem(REFRESH_TOKEN, model[REFRESH_TOKEN]);
   if (model[TOKEN_TYPE]) localStorage.setItem(TOKEN_TYPE, model[TOKEN_TYPE]);
   const expireIn = model[EXPIRE_IN];
-  if (expireIn){
-    localStorage.setItem(EXPIRE_TIME,  ((1000 * expireIn) + new Date().getTime()).toString());
+  if (expireIn) {
+    localStorage.setItem(EXPIRE_TIME, ((1000 * expireIn) + new Date().getTime()).toString());
     localStorage.setItem(EXPIRE_IN, expireIn);
   }
   // if (model[SCOPE]) localStorage.setItem(SCOPE, model[SCOPE]);
@@ -80,7 +79,7 @@ export function gotoUaa(): void {
   window.location.href = `${UAA.uri}oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
 }
 
-export function gotoLocal():void{
+export function gotoLocal(): void {
   const goto = localStorage.getItem(GOTO);
   if (goto && history.location.pathname !== goto) {
     history.push(goto);
