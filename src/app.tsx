@@ -1,10 +1,12 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { notification } from 'antd';
-import { history, RequestConfig } from 'umi';
+import { RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
+import { getAccessToken, setAccessToken, gotoUaa, gotoLocal } from '@/utils/auth';
+import qs from 'qs';
 import { queryCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 
@@ -18,12 +20,16 @@ export async function getInitialState(): Promise<{
       const currentUser = await queryCurrent();
       return currentUser;
     } catch (error) {
-      history.push('/user/login');
+      console.error(' ========== fetchUserInfo ========== ');
+      console.error(error);
+      // history.push('/user/login');
     }
     return undefined;
   };
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+
+  // 如果已经授权
+  const accessToken = getAccessToken();
+  if (accessToken.valid) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -31,15 +37,23 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings,
     };
   }
-  return {
-    fetchUserInfo,
-    settings: defaultSettings,
-  };
+
+  // 授权回调
+  if (window.location.pathname === '/' && window.location.hash) {
+    const hashAccessToken = qs.parse(window.location.hash.substring(1));
+    setAccessToken(hashAccessToken as unknown as AUTH.OAuth2AccessToken);
+    gotoLocal();
+    const currentUser = await fetchUserInfo();
+    return { currentUser, fetchUserInfo, settings: defaultSettings };
+  }
+
+  gotoUaa();
+  return { fetchUserInfo };
 }
 
 export const layout = ({
-  initialState,
-}: {
+                         initialState,
+                       }: {
   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
 }): BasicLayoutProps => {
   return {
@@ -47,12 +61,12 @@ export const layout = ({
     disableContentMargin: false,
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { currentUser } = initialState;
-      const { location } = history;
-      // 如果没有登录，重定向到 login
-      if (!currentUser && location.pathname !== '/user/login') {
-        history.push('/user/login');
-      }
+      // const { currentUser } = initialState;
+      // const { location } = history;
+      // // 如果没有登录，重定向到 login
+      // if (!currentUser && location.pathname !== '/user/login') {
+      //   history.push('/user/login');
+      // }
     },
     menuHeaderRender: undefined,
     ...initialState?.settings,

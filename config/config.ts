@@ -89,4 +89,12 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  define: {
+    UAA: {
+      clientId: 'witpark-personal',
+      uri: 'http://192.168.24.230:10000/uaa/',
+      callback: 'http://localhost:8000',
+      scope: 'personal',
+    },
+  },
 });
