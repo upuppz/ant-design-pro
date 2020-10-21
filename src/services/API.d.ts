@@ -1,10 +1,10 @@
 declare namespace API {
   export interface CurrentUser {
-    userId: string,
+    userId: number,
     userType: number,
-    avatar?: string,
     nickname: string,
     description: string,
+    avatar?: string,
     ext: {
       key: string;
       label: string;

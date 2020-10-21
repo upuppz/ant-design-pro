@@ -6,7 +6,7 @@ export default {
   // 拂晓蓝
   primaryColor: '#1890ff',
   layout: 'mix',
-  contentWidth: 'Fixed',
+  contentWidth: 'Fluid',
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,

@@ -13,7 +13,7 @@ export default defineConfig({
   },
   layout: {
     name: 'Ant Design Pro',
-    locale: true,
+    locale: false,
     ...defaultSettings,
   },
   locale: {
@@ -44,9 +44,25 @@ export default defineConfig({
     },
     {
       path: '/welcome',
-      name: 'welcome',
-      icon: 'smile',
+      name: '首页',
+      icon: 'BankOutlined',
       component: './Welcome',
+    },
+    {
+      name: '财务管理',
+      icon: 'table',
+      path: '/finance',
+      routes:[
+        {
+          path: '/finance/expenses',
+          name: '消费记录',
+          component: './finance/expenses',
+        }, {
+          path: '/finance/recharge',
+          name: '充值记录',
+          component: './finance/recharge',
+        },
+      ]
     },
     {
       path: '/admin',
@@ -62,12 +78,6 @@ export default defineConfig({
           component: './Welcome',
         },
       ],
-    },
-    {
-      name: 'list.table-list',
-      icon: 'table',
-      path: '/list',
-      component: './ListTableList',
     },
     {
       path: '/',
@@ -92,7 +102,7 @@ export default defineConfig({
   define: {
     UAA: {
       clientId: 'witpark-personal',
-      uri: 'http://192.168.24.224:10000/uaa/',
+      uri: 'http://localhost:10000/uaa/',
       callback: 'http://localhost:8000',
       scope: 'personal',
     },

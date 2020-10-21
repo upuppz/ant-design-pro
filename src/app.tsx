@@ -33,6 +33,15 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
 
+  // 授权回调
+  if (window.location.pathname === '/' && window.location.hash) {
+    const hashAccessToken = qs.parse(window.location.hash.substring(1));
+    setAccessToken((hashAccessToken as unknown) as AUTH.OAuth2AccessToken);
+    gotoLocal();
+    const currentUser = await fetchUserInfo();
+    return { currentUser, fetchUserInfo, settings: defaultSettings };
+  }
+
   // 如果已经授权
   const accessToken = getValidAccessToken();
   if (accessToken.valid) {
@@ -44,22 +53,15 @@ export async function getInitialState(): Promise<{
     };
   }
 
-  // 授权回调
-  if (window.location.pathname === '/' && window.location.hash) {
-    const hashAccessToken = qs.parse(window.location.hash.substring(1));
-    setAccessToken((hashAccessToken as unknown) as AUTH.OAuth2AccessToken);
-    gotoLocal();
-    const currentUser = await fetchUserInfo();
-    return { currentUser, fetchUserInfo, settings: defaultSettings };
-  }
+
 
   gotoUaa();
   return { fetchUserInfo };
 }
 
 export const layout = ({
-  initialState,
-}: {
+                         initialState,
+                       }: {
   initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
 }): BasicLayoutProps => {
   return {
@@ -103,10 +105,10 @@ export const request: RequestConfig = {
   // prefix: 'http://localhost:10000',
   errorConfig: {
     adaptor: (resData) => {
-      const success = resData?.code ? resData?.code === '00000' : true;
+      const success = resData.code ? resData.code === '00000' : true;
       return success
         ? { success }
-        : { errorMessage: resData?.msg, errorCode: resData?.code, success };
+        : { errorMessage: resData.msg, errorCode: resData.code, success };
     },
     errorPage: '/exception',
   },
@@ -175,8 +177,13 @@ export const request: RequestConfig = {
     async (ctx, next) => {
       await next();
       // console.log("middlewares=========")
+      // console.log(ctx)
       // console.log(ctx.req)
       // console.log(ctx.res)
+      // @ts-ignore
+      if (ctx?.req?.options?.skipUnpack) {
+        return;
+      }
       ctx.res = ctx.res.data;
     },
   ],
