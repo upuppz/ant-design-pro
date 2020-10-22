@@ -9,7 +9,7 @@ import { getValidAccessToken, setAccessToken, gotoUaa, gotoLocal } from '@/utils
 import qs from 'qs';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import DEFAULT_AVATAR from '@/assets/default_avatar.png';
-import { queryCurrent } from './services/user';
+import { getCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 
 export async function getInitialState(): Promise<{
@@ -19,7 +19,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const res = await queryCurrent();
+      const res = await getCurrent();
       if (res && !res?.avatar) {
         res.avatar = DEFAULT_AVATAR;
       }

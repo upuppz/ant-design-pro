@@ -2,9 +2,7 @@
 import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -49,20 +47,35 @@ export default defineConfig({
       component: './Welcome',
     },
     {
+      name: 'account',
+      icon: 'user',
+      path: '/account',
+      hideInMenu: true,
+      routes: [
+        {
+          name: '个人中心',
+          icon: 'smile',
+          path: '/account/center',
+          component: './account/center',
+        },
+      ],
+    },
+    {
       name: '财务管理',
       icon: 'table',
       path: '/finance',
-      routes:[
+      routes: [
         {
           path: '/finance/expenses',
           name: '消费记录',
           component: './finance/expenses',
-        }, {
+        },
+        {
           path: '/finance/recharge',
           name: '充值记录',
           component: './finance/recharge',
         },
-      ]
+      ],
     },
     {
       path: '/admin',
