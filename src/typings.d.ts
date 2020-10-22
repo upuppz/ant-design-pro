@@ -15,6 +15,7 @@ declare module 'omit.js';
 declare module 'bizcharts-plugin-slider';
 declare module 'mockjs';
 declare module '@antv/data-set';
+declare module '@antv/l7-react';
 
 declare module 'react-fittext';
 

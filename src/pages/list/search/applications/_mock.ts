@@ -102,8 +102,10 @@ function fakeList(count: number): ListItemDataType[] {
 }
 
 function getFakeList(req: Request, res: Response) {
-  const params = req.query;
-  // @ts-ignore
+  const params = (req.query as any) as {
+    count: number;
+  };
+
   const count = params.count * 1 || 20;
 
   const result = fakeList(count);
