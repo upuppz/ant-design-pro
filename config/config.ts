@@ -58,6 +58,12 @@ export default defineConfig({
           path: '/account/center',
           component: './account/center',
         },
+        // {
+        //   name: 'settings',
+        //   icon: 'smile',
+        //   path: '/account/settings',
+        //   component: './account/settings',
+        // },
       ],
     },
     {

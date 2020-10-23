@@ -5,7 +5,7 @@ export interface UserCenterVO {
   /*
    * 用户名
    */
-  username: string;
+  nickname: string;
   /*
    * 头像
    */
@@ -18,14 +18,18 @@ export interface UserCenterVO {
    * 部门名称
    */
   deptName: string;
+  /**
+   * 近一次登陆时间
+   */
+  lastLoginTime: Date;
   /*
    * 所属楼栋列表
    */
-  buildings: string;
+  buildingNames: Array<string>;
   /*
    * 用户角色名称列表
    */
-  roles: Array<string>;
+  roleNames: Array<string>;
 }
 
 /*

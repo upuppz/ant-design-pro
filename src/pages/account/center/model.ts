@@ -1,6 +1,6 @@
 import { Reducer, Effect } from 'umi';
 import { LoginLog, UserCenterVO } from './data.d';
-import { listLoginLog } from './service';
+import { listLoginLog,getUserInfo } from './service';
 
 export interface ModalState {
   userInfo: Partial<UserCenterVO>;
@@ -18,21 +18,18 @@ export interface ModelType {
   state: ModalState;
   effects: {
     listLoginLog: Effect;
-    // changeAvatar: Effect;
+    getUserInfo: Effect;
   };
   reducers: {
     saveLoginLog: Reducer<ModalState>;
+    saveUserInfo: Reducer<ModalState>;
   };
 }
 
 const Model: ModelType = {
   namespace: 'userCenter',
   state: {
-    userInfo: {
-      deptName: '管委会',
-      buildings: '孵化一期,孵化二期,A栋',
-      roles: ['管理员', '用户', '警卫'],
-    },
+    userInfo: {},
     logs: [],
     logsCurrent: 0,
     logsPages: 1,
@@ -43,7 +40,6 @@ const Model: ModelType = {
     * listLoginLog(_, { call, put, select }) {
       const current = yield select((state: any) => state[Model.namespace].logsCurrent);
       const response = yield call(listLoginLog, { current: current + 1 });
-      console.log(response)
       yield put({
         type: 'saveLoginLog',
         payload: {
@@ -51,19 +47,16 @@ const Model: ModelType = {
           logsCurrent: response.current,
           logsPages: response.pages,
           logsTotal: response.total,
-        }
+        },
       });
     },
-    /* *changeAvatar(_, { put }) {
-       console.log('changeAvatar');
-       console.log(_);
-       const spreadElements = _;
-       console.log(spreadElements);
-       yield put({
-         type: 'saveAvatar',
-         avatar: _.avatar,
-       });
-     }, */
+    * getUserInfo(_, { call, put }) {
+      const response = yield call(getUserInfo);
+      yield put({
+        type: 'saveUserInfo',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
@@ -71,18 +64,15 @@ const Model: ModelType = {
       return {
         ...(state as ModalState),
         ...action.payload,
-        logs: state?.logs.concat(action.payload.logs)
+        logs: state?.logs.concat(action.payload.logs),
       };
     },
-    /* saveAvatar(state, action) {
-      console.log('changeAvatar');
-      console.log(state);
-      console.log(action);
+    saveUserInfo(state, action) {
       return {
-        ...(state as EnterpriseModalState),
-        info: { ...state?.info, avatar: action.avatar },
+        ...(state as ModalState),
+        userInfo: action.payload,
       };
-    }, */
+    },
   },
 };
 

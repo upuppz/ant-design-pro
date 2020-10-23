@@ -5,6 +5,7 @@ import { history, useModel } from 'umi';
 // import { outLogin } from '@/services/login';
 // import { stringify } from 'querystring';
 import { loginOut } from '@/utils/auth';
+import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
@@ -98,7 +99,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
+        <Avatar size="small" className={styles.avatar} src={currentUser.avatar || DEFAULT_AVATAR} alt="avatar" />
         <span className={`${styles.name} anticon`}>{currentUser.nickname}</span>
       </span>
     </HeaderDropdown>

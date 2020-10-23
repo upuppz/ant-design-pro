@@ -20,6 +20,9 @@ const Articles: React.FC<ModalState & { dispatch: Dispatch; loading: boolean }> 
   logsCurrent,
   logsPages,
 }) => {
+
+
+
   const statusColorHandler = (status: number): string => {
     if (status === 0) {
       return 'green';

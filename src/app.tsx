@@ -5,10 +5,10 @@ import { RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
-import { getValidAccessToken, setAccessToken, gotoUaa, gotoLocal } from '@/utils/auth';
+import { getValidAccessToken, gotoLocal, gotoUaa, setAccessToken } from '@/utils/auth';
 import qs from 'qs';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import DEFAULT_AVATAR from '@/assets/default_avatar.png';
+
 import { getCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 
@@ -19,11 +19,7 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const res = await getCurrent();
-      if (res && !res?.avatar) {
-        res.avatar = DEFAULT_AVATAR;
-      }
-      return res;
+      return await getCurrent();
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(' ========== fetchUserInfo ========== ');
