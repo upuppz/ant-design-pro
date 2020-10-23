@@ -1,7 +1,7 @@
 import { Badge, Card, Descriptions, Divider, Table } from 'antd';
 import React, { Component } from 'react';
 
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import { connect, Dispatch } from 'umi';
 import { BasicProfileDataType } from './data.d';
 import styles from './style.less';
@@ -150,7 +150,7 @@ class Basic extends Component<BasicProps, BasicState> {
       },
     ];
     return (
-      <PageHeaderWrapper>
+      <PageContainer>
         <Card bordered={false}>
           <Descriptions title="退款申请" style={{ marginBottom: 32 }}>
             <Descriptions.Item label="取货单号">1000000000</Descriptions.Item>
@@ -185,7 +185,7 @@ class Basic extends Component<BasicProps, BasicState> {
             columns={progressColumns}
           />
         </Card>
-      </PageHeaderWrapper>
+      </PageContainer>
     );
   }
 }

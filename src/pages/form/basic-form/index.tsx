@@ -2,7 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Card, DatePicker, Input, Form, InputNumber, Radio, Select, Tooltip } from 'antd';
 import { connect, Dispatch, FormattedMessage, formatMessage } from 'umi';
 import React, { FC } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import styles from './style.less';
 
 const FormItem = Form.Item;
@@ -57,7 +57,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   };
 
   return (
-    <PageHeaderWrapper content={<FormattedMessage id="formandbasic-form.basic.description" />}>
+    <PageContainer content={<FormattedMessage id="formandbasic-form.basic.description" />}>
       <Card bordered={false}>
         <Form
           hideRequiredMark
@@ -235,7 +235,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
           </FormItem>
         </Form>
       </Card>
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 };
 

@@ -37,12 +37,6 @@ export default defineConfig({
               redirect: '/user/login',
             },
             {
-              name: 'login',
-              icon: 'smile',
-              path: '/user/login',
-              component: './user/login',
-            },
-            {
               name: 'register-result',
               icon: 'smile',
               path: '/user/register-result',
@@ -75,6 +69,10 @@ export default defineConfig({
               icon: 'dashboard',
               routes: [
                 {
+                  path: '/',
+                  redirect: '/dashboard/analysis',
+                },
+                {
                   name: 'analysis',
                   icon: 'smile',
                   path: '/dashboard/analysis',
@@ -99,6 +97,10 @@ export default defineConfig({
               icon: 'form',
               name: 'form',
               routes: [
+                {
+                  path: '/',
+                  redirect: '/form/basic-form',
+                },
                 {
                   name: 'basic-form',
                   icon: 'smile',
@@ -154,6 +156,10 @@ export default defineConfig({
                   ],
                 },
                 {
+                  path: '/',
+                  redirect: '/list/table-list',
+                },
+                {
                   name: 'table-list',
                   icon: 'smile',
                   path: '/list/table-list',
@@ -179,6 +185,10 @@ export default defineConfig({
               icon: 'profile',
               routes: [
                 {
+                  path: '/',
+                  redirect: '/profile/basic',
+                },
+                {
                   name: 'basic',
                   icon: 'smile',
                   path: '/profile/basic',
@@ -198,6 +208,10 @@ export default defineConfig({
               path: '/result',
               routes: [
                 {
+                  path: '/',
+                  redirect: '/result/success',
+                },
+                {
                   name: 'success',
                   icon: 'smile',
                   path: '/result/success',
@@ -216,6 +230,10 @@ export default defineConfig({
               icon: 'warning',
               path: '/exception',
               routes: [
+                {
+                  path: '/',
+                  redirect: '/exception/403',
+                },
                 {
                   name: '403',
                   icon: 'smile',
@@ -242,6 +260,10 @@ export default defineConfig({
               path: '/account',
               routes: [
                 {
+                  path: '/',
+                  redirect: '/account/center',
+                },
+                {
                   name: 'center',
                   icon: 'smile',
                   path: '/account/center',
@@ -260,6 +282,10 @@ export default defineConfig({
               icon: 'highlight',
               path: '/editor',
               routes: [
+                {
+                  path: '/',
+                  redirect: '/editor/flow',
+                },
                 {
                   name: 'flow',
                   icon: 'smile',

@@ -60,6 +60,8 @@ class TagSelect extends Component<TagSelectProps, TagSelectState> {
     },
   };
 
+  static Option: typeof TagSelectOption = TagSelectOption;
+
   static getDerivedStateFromProps(nextProps: TagSelectProps) {
     if ('value' in nextProps) {
       return { value: nextProps.value || [] };
@@ -122,12 +124,10 @@ class TagSelect extends Component<TagSelectProps, TagSelectState> {
     });
   };
 
-  isTagSelectOption = (node: React.ReactElement<any, any>) =>
+  isTagSelectOption = (node: any) =>
     node &&
     node.type &&
     (node.type.isTagSelectOption || node.type.displayName === 'TagSelectOption');
-
-  static Option: typeof TagSelectOption = TagSelectOption;
 
   render() {
     const { value, expand } = this.state;
