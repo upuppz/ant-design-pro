@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useModel } from '@@/plugin-model/useModel';
-import { Card, List, Tag, Typography } from 'antd';
+import { Card, List, Statistic, Tag, Typography } from 'antd';
 import { QueryFilter, ProFormSelect, ProFormDateRangePicker } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
 import { PaginationProps } from 'antd/es/pagination';
@@ -81,9 +81,8 @@ export default (): React.ReactNode => {
         </QueryFilter>
       }
     >
-      <Card>
+      <Card className={styles.custom}>
         <List<ItemType>
-          className={styles.custom}
           itemLayout="vertical"
           pagination={{
             onChange: (newPage: number, pageSize) => {
@@ -100,13 +99,12 @@ export default (): React.ReactNode => {
                   <>
                     <p className={styles.itemNo}>No.{item.id}</p>
                     <span className={styles.targetText}>{targetTypeEnum[item.targetType]}</span>
-                    <Typography.Text className={styles.feeText} type="danger">
-                      {item.fee}
-                    </Typography.Text>
+                    <Statistic className={styles.feeText} valueStyle={{ color: '#3f8600' }} value={item.fee} precision={2} />
                   </>
                 }
+                description={handleExtraCosts(item.extraCost)}
               />
-              {handleExtraCosts(item.extraCost)}
+              <Typography.Paragraph>{item.remark}</Typography.Paragraph>
             </List.Item>
           )}
         />

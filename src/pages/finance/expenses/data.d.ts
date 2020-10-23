@@ -33,4 +33,8 @@ export interface ItemType {
    * 订单创建时间
    */
   createdAt: Date;
+  /**
+   * 备注信息
+   */
+  remark:string;
 }

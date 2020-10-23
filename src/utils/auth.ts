@@ -79,6 +79,16 @@ export function gotoUaa(): void {
   window.location.href = `${UAA.uri}oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
 }
 
+/**
+ * 退出登录，并且将当前的 url 保存
+ */
+export function loginOut(): void {
+  const accessToken = localStorage.getItem(ACCESS_TOKEN);
+  // @ts-ignore
+  window.location.href = `${UAA.uri}logout?${ACCESS_TOKEN}=${accessToken}`;
+  localStorage.clear();
+};
+
 export function gotoLocal(): void {
   const goto = localStorage.getItem(GOTO);
   if (goto && history.location.pathname !== goto) {
