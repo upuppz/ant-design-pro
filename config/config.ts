@@ -47,7 +47,7 @@ export default defineConfig({
       component: './Welcome',
     },
     {
-      name: 'account',
+      name: 'Account',
       icon: 'user',
       path: '/account',
       hideInMenu: true,
@@ -56,14 +56,14 @@ export default defineConfig({
           name: '个人中心',
           icon: 'smile',
           path: '/account/center',
-          component: './account/center',
+          component: './Account/Center',
         },
-        // {
-        //   name: 'settings',
-        //   icon: 'smile',
-        //   path: '/account/settings',
-        //   component: './account/settings',
-        // },
+        {
+          name: '个人设置',
+          icon: 'smile',
+          path: '/account/settings',
+          component: './Account/Settings',
+        },
       ],
     },
     {

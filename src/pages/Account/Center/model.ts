@@ -1,9 +1,9 @@
 import { Reducer, Effect } from 'umi';
-import { LoginLog, UserCenterVO } from './data.d';
-import { listLoginLog,getUserInfo } from './service';
+import { LoginLog, UserCenterVO } from './data';
+import { listLoginLog, getUserInfo } from './service';
 
 export interface ModalState {
-  userInfo: Partial<UserCenterVO>;
+  userInfo?: Partial<UserCenterVO>;
   logs: LoginLog[];
   // 当前页
   logsCurrent: number;
@@ -23,21 +23,20 @@ export interface ModelType {
   reducers: {
     saveLoginLog: Reducer<ModalState>;
     saveUserInfo: Reducer<ModalState>;
+    changeAvatar: Reducer<ModalState>;
   };
 }
 
 const Model: ModelType = {
   namespace: 'userCenter',
   state: {
-    userInfo: {},
     logs: [],
     logsCurrent: 0,
     logsPages: 1,
     logsTotal: 0,
   },
-
   effects: {
-    * listLoginLog(_, { call, put, select }) {
+    *listLoginLog(_, { call, put, select }) {
       const current = yield select((state: any) => state[Model.namespace].logsCurrent);
       const response = yield call(listLoginLog, { current: current + 1 });
       yield put({
@@ -50,12 +49,15 @@ const Model: ModelType = {
         },
       });
     },
-    * getUserInfo(_, { call, put }) {
-      const response = yield call(getUserInfo);
-      yield put({
-        type: 'saveUserInfo',
-        payload: response,
-      });
+    *getUserInfo(_, { call, put, select }) {
+      const userInfo = yield select((state: any) => state[Model.namespace].userInfo);
+      if (!userInfo) {
+        const response = yield call(getUserInfo);
+        yield put({
+          type: 'saveUserInfo',
+          payload: response.data,
+        });
+      }
     },
   },
 
@@ -71,6 +73,12 @@ const Model: ModelType = {
       return {
         ...(state as ModalState),
         userInfo: action.payload,
+      };
+    },
+    changeAvatar(state, action) {
+      return {
+        ...(state as ModalState),
+        userInfo: { ...state?.userInfo, avatar: action.payload },
       };
     },
   },

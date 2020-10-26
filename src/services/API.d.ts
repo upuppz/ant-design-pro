@@ -1,4 +1,12 @@
 declare namespace API {
+
+  export interface Ret<T = any> {
+    code: string;
+    msg?: string;
+    showType?: number;
+    data?: T;
+  }
+
   export interface CurrentUser {
     userId: number,
     userType: number,

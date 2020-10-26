@@ -79,7 +79,7 @@ const Center: React.FC<{ dispatch: Dispatch, userCenter: ModalState, loading: bo
               marginRight: 8,
             }}
           />
-          {userCenter.userInfo.deptName}
+          {userCenter.userInfo?.deptName}
         </p>
         <p>
           <HomeOutlined
@@ -87,7 +87,7 @@ const Center: React.FC<{ dispatch: Dispatch, userCenter: ModalState, loading: bo
               marginRight: 8,
             }}
           />
-          {userCenter.userInfo.buildingNames?.join()}
+          {userCenter.userInfo?.buildingNames?.join()}
         </p>
       </div>
     );
@@ -95,7 +95,7 @@ const Center: React.FC<{ dispatch: Dispatch, userCenter: ModalState, loading: bo
     const renderTagList = () => (
       <div className={styles.tags}>
         <div className={styles.tagsTitle}>角色</div>
-        {(userCenter.userInfo.roleNames || []).map((item, index) => (
+        {(userCenter.userInfo?.roleNames || []).map((item, index) => (
           <Tag key={index.toString()}>{item}</Tag>
         ))}
       </div>

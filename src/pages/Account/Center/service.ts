@@ -1,8 +1,8 @@
 import { request } from 'umi';
-import { LoginLog, UserCenterVO } from '@/pages/account/center/data';
+import { LoginLog, UserCenterVO } from '@/pages/Account/Center/data';
 
 export async function getUserInfo() {
-  return request<UserCenterVO>('/upms/user/info');
+  return request<API.Ret<UserCenterVO>>('/upms/user/info');
 }
 
 

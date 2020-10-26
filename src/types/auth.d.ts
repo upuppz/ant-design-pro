@@ -12,11 +12,6 @@ declare namespace AUTH {
     valid: boolean,
   }
 
-  // export interface Ret<T = any> {
-  //   code: string;
-  //   msg?: string;
-  //   showType?: number;
-  //   data?: T;
-  // }
+
 
 }

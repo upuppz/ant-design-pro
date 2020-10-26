@@ -5,7 +5,7 @@ import { request } from 'umi';
 // }
 
 export async function getCurrent() {
-  return request<API.CurrentUser>('/upms/current');
+  return request<API.Ret<API.CurrentUser>>('/upms/current');
 }
 
 export async function queryNotices(): Promise<any> {

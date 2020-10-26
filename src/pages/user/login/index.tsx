@@ -43,7 +43,7 @@ const Login: React.FC<{}> = () => {
   const [submitting, setSubmitting] = useState(false);
   const { initialState, setInitialState } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
-  const [type, setType] = useState<string>('account');
+  const [type, setType] = useState<string>('Account');
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
@@ -88,7 +88,7 @@ const Login: React.FC<{}> = () => {
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
             <Tab key="account" tab="账户密码登录">
-              {status === 'error' && loginType === 'account' && !submitting && (
+              {status === 'error' && loginType === 'Account' && !submitting && (
                 <LoginMessage content="账户或密码错误（admin/ant.design）" />
               )}
 

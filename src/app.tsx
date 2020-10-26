@@ -17,9 +17,9 @@ export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
   fetchUserInfo: () => Promise<API.CurrentUser | undefined>;
 }> {
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = async () =>  {
     try {
-      return await getCurrent();
+      return (await getCurrent()).data;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(' ========== fetchUserInfo ========== ');
@@ -34,7 +34,7 @@ export async function getInitialState(): Promise<{
     const hashAccessToken = qs.parse(window.location.hash.substring(1));
     setAccessToken((hashAccessToken as unknown) as AUTH.OAuth2AccessToken);
     gotoLocal();
-    const currentUser = await fetchUserInfo();
+    const currentUser =  await fetchUserInfo();
     return { currentUser, fetchUserInfo, settings: defaultSettings };
   }
 
@@ -48,7 +48,6 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings,
     };
   }
-
 
 
   gotoUaa();
@@ -108,7 +107,7 @@ export const request: RequestConfig = {
     },
     errorPage: '/exception',
   },
-  parseResponse: true,
+  // parseResponse: true,
   /**
    * 异常处理程序
    */
@@ -129,6 +128,10 @@ export const request: RequestConfig = {
             }
             break;
           default:
+            notification.error({
+              message: msg,
+              description: msg,
+            });
         }
         // TODO 2020/10/16:showType处理
       }
@@ -169,20 +172,20 @@ export const request: RequestConfig = {
     return response;
   },
   // 中间件统一提示处理
-  middlewares: [
-    async (ctx, next) => {
-      await next();
-      // console.log("middlewares=========")
-      // console.log(ctx)
-      // console.log(ctx.req)
-      // console.log(ctx.res)
-      // @ts-ignore
-      if (ctx?.req?.options?.skipUnpack) {
-        return;
-      }
-      ctx.res = ctx.res.data;
-    },
-  ],
+  // middlewares: [
+  //   async (ctx, next) => {
+  //     await next();
+  //     // console.log("middlewares=========")
+  //     // console.log(ctx)
+  //     // console.log(ctx.req)
+  //     // console.log(ctx.res)
+  //     // @ts-ignore
+  //     if (ctx?.req?.options?.skipUnpack) {
+  //       return;
+  //     }
+  //     ctx.res = ctx.res.data;
+  //   },
+  // ],
   requestInterceptors: [
     (url, _options) => {
       const options = _options || {};

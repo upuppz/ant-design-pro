@@ -4,7 +4,7 @@ import { history } from 'umi';
 /**
  * 令牌
  */
-const ACCESS_TOKEN: string = 'access_token';
+export const ACCESS_TOKEN: string = 'access_token';
 /**
  * 令牌类型
  */
