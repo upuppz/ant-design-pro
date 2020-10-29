@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
-import { Dispatch, connect } from 'umi';
 import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
-import { ModalState } from '@/pages/Account/Center/model';
-import { UserCenterVO } from '@/pages/Account/Center/data';
 import BaseView from './components/base';
 import BindingView from './components/binding';
 import NotificationView from './components/notification';
@@ -11,11 +8,6 @@ import SecurityView from './components/security';
 import styles from './style.less';
 
 const { Item } = Menu;
-
-interface SettingsProps {
-  dispatch: Dispatch;
-  userInfo?: Partial<UserCenterVO>;
-}
 
 type SettingsStateKeys = 'base' | 'security' | 'binding' | 'notification';
 
@@ -26,10 +18,10 @@ interface SettingsState {
   selectKey: SettingsStateKeys;
 }
 
-class Settings extends Component<SettingsProps, SettingsState> {
+class Settings extends Component<any, SettingsState> {
   main: HTMLDivElement | undefined = undefined;
 
-  constructor(props: SettingsProps) {
+  constructor(props: any) {
     super(props);
     const menuMap = {
       base: '基本设置',
@@ -42,14 +34,6 @@ class Settings extends Component<SettingsProps, SettingsState> {
       selectKey: 'base',
     };
   }
-
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'userCenter/getUserInfo',
-    });
-  }
-
 
   getMenu = () => {
     const { menuMap } = this.state;
@@ -91,12 +75,6 @@ class Settings extends Component<SettingsProps, SettingsState> {
   };
 
   render() {
-    const { userInfo } = this.props;
-
-    if (!userInfo) {
-      return null;
-    }
-
     const { selectKey } = this.state;
     return (
       <GridContent>
@@ -126,11 +104,4 @@ class Settings extends Component<SettingsProps, SettingsState> {
   }
 }
 
-export default connect(
-  ({
-     userCenter,
-   }: {
-    userCenter: ModalState
-  }) => ({
-    userInfo: userCenter.userInfo,
-  }))(Settings);
+export default Settings;

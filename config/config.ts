@@ -30,17 +30,6 @@ export default defineConfig({
   // umi routes: https://umijs.org/docs/routing
   routes: [
     {
-      path: '/user',
-      layout: false,
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
-    {
       path: '/welcome',
       name: '首页',
       icon: 'BankOutlined',
@@ -69,17 +58,17 @@ export default defineConfig({
     {
       name: '财务管理',
       icon: 'table',
-      path: '/finance',
+      path: '/Finance',
       routes: [
         {
-          path: '/finance/expenses',
+          path: '/Finance/Expenses',
           name: '消费记录',
-          component: './finance/expenses',
+          component: './Finance/Expenses',
         },
         {
-          path: '/finance/recharge',
+          path: '/Finance/Recharge',
           name: '充值记录',
-          component: './finance/recharge',
+          component: './Finance/Recharge',
         },
       ],
     },

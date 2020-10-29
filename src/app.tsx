@@ -14,36 +14,36 @@ import defaultSettings from '../config/defaultSettings';
 
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
-  currentUser?: API.CurrentUser;
-  fetchUserInfo: () => Promise<API.CurrentUser | undefined>;
+  currentUser?: API.CurrentUserVO;
+  // fetchUserInfo: () => Promise<API.CurrentUserVO | undefined>;
 }> {
-  const fetchUserInfo = async () =>  {
-    try {
-      return (await getCurrent()).data;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(' ========== fetchUserInfo ========== ');
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-    return undefined;
-  };
+  // const fetchUserInfo = async () => {
+  //   try {
+  //     return (await getCurrent()).data;
+  //   } catch (error) {
+  //     // eslint-disable-next-line no-console
+  //     console.error(' ========== fetchUserInfo ========== ');
+  //     // eslint-disable-next-line no-console
+  //     console.error(error);
+  //   }
+  //   return undefined;
+  // };
 
   // 授权回调
   if (window.location.pathname === '/' && window.location.hash) {
     const hashAccessToken = qs.parse(window.location.hash.substring(1));
     setAccessToken((hashAccessToken as unknown) as AUTH.OAuth2AccessToken);
     gotoLocal();
-    const currentUser =  await fetchUserInfo();
-    return { currentUser, fetchUserInfo, settings: defaultSettings };
+    const currentUser = (await getCurrent()).data;
+    return { currentUser/* , fetchUserInfo */, settings: defaultSettings };
   }
 
   // 如果已经授权
   const accessToken = getValidAccessToken();
   if (accessToken.valid) {
-    const currentUser = await fetchUserInfo();
+    const currentUser = (await getCurrent()).data;
     return {
-      fetchUserInfo,
+      /* fetchUserInfo, */
       currentUser,
       settings: defaultSettings,
     };
@@ -51,13 +51,13 @@ export async function getInitialState(): Promise<{
 
 
   gotoUaa();
-  return { fetchUserInfo };
+  return {};
 }
 
 export const layout = ({
                          initialState,
                        }: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUserVO };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
@@ -113,6 +113,8 @@ export const request: RequestConfig = {
    */
   errorHandler: (error: ResponseError) => {
     const { response } = error;
+    console.log("===== errorHandler =======");
+    console.log(error);
     if (error.name === 'BizError') {
       const { code, data, msg } = error.data;
       if (code !== '00000') {
@@ -137,7 +139,6 @@ export const request: RequestConfig = {
       }
       throw error;
     } else if (response && response.status) {
-      const errorText = codeMessage[response.status] || response.statusText;
       const { status, url } = response;
       if (status === 401) {
         if (loginModel == null) {
@@ -160,7 +161,7 @@ export const request: RequestConfig = {
       } else {
         notification.error({
           message: `请求错误 ${status}: ${url}`,
-          description: errorText,
+          description: codeMessage[response.status] || response.statusText,
         });
       }
     } else if (!response) {

@@ -2,18 +2,10 @@ import { request } from 'umi';
 
 export const ChangeAvatarApi = '/upms/user/avatar';
 
-export async function queryCurrent() {
-  return request('/api/currentUser');
+export async function updatePersonal(params: any) {
+  return request('/upms/user/personal', {
+    method: 'PUT',
+    data: params,
+  });
 }
 
-export async function queryProvince() {
-  return request('/api/geographic/province');
-}
-
-export async function queryCity(province: string) {
-  return request(`/api/geographic/city/${province}`);
-}
-
-export async function query() {
-  return request('/api/users');
-}

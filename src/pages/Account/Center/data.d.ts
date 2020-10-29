@@ -1,36 +1,3 @@
-/*
- * 用户中心 - 显示层对象
- */
-export interface UserCenterVO {
-  /*
-   * 用户名
-   */
-  nickname: string;
-  /*
-   * 头像
-   */
-  avatar: string;
-  /*
-   * 描述
-   */
-  description: string;
-  /*
-   * 部门名称
-   */
-  deptName: string;
-  /**
-   * 近一次登陆时间
-   */
-  lastLoginTime: Date;
-  /*
-   * 所属楼栋列表
-   */
-  buildingNames: Array<string>;
-  /*
-   * 用户角色名称列表
-   */
-  roleNames: Array<string>;
-}
 
 /*
  * 登录日志实体类
@@ -68,4 +35,29 @@ export interface LoginLog {
    * 登录时间
    */
   createdAt: Date;
+}
+
+
+export interface ListItemDataType {
+  id: string;
+  owner: string;
+  title: string;
+  avatar: string;
+  cover: string;
+  status: 'normal' | 'exception' | 'active' | 'success';
+  percent: number;
+  logo: string;
+  href: string;
+  body?: any;
+  updatedAt: string;
+  createdAt: string;
+  subDescription: string;
+  description: string;
+  activeUser: number;
+  newUser: number;
+  star: number;
+  like: number;
+  message: number;
+  content: string;
+  members: any[];
 }

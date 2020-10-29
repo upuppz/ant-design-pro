@@ -1,128 +1,56 @@
-import { UploadOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Select, Upload } from 'antd';
-import { connect } from 'umi';
+import { Button, Form, Input, message, Select } from 'antd';
 import React from 'react';
-import ImgCrop from 'antd-img-crop';
-import { ChangeAvatarApi } from '@/pages/Account/Settings/service';
-import { UploadChangeParam } from 'antd/es/upload';
 import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import { useModel } from '@@/plugin-model/useModel';
-import { ACCESS_TOKEN } from '@/utils/auth';
-import { ConnectProps } from '@@/plugin-dva/connect';
-import { UserCenterVO } from '@/pages/Account/Center/data';
-// import GeographicView from './GeographicView';
+import AvatarView from '@/pages/Account/Settings/components/AvatarView';
 import PhoneView from './PhoneView';
 import styles from './BaseView.less';
+import { useRequest } from '@@/plugin-request/request';
+import { updatePersonal } from '@/pages/Account/Settings/service';
 
 const { Option } = Select;
 
-// 头像组件 方便以后独立，增加裁剪之类的功能
-const AvatarView = ({
-                      avatar,
-                      onChangeAvatar,
-                    }: {
-  avatar: string | undefined;
-  onChangeAvatar: any;
-}) => {
-  const onChange = (info: UploadChangeParam) => {
-    if (info.file.status === 'done') {
-      const { response } = info.file;
-      if (response.code === '00000') {
-        onChangeAvatar(response.data);
-        message.success('头像更新成功');
-      } else {
-        message.error(`头像更新失败,${response.msg}`);
-      }
-    } else if (info.file.status === 'error') {
-      message.error('头像更新失败');
+const validatorPhone = (rule: any, value: string) => {
+  if (value) {
+    const values = value.split('-');
+    if (!values[0] || !values[1]) {
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject("请输入您的区号与号码!");
     }
-  };
-
-  return (
-    <>
-      <div className={styles.avatar_title}>头像</div>
-      <div className={styles.avatar}>
-        <img src={avatar} alt="avatar" />
-      </div>
-      <ImgCrop rotate>
-        <Upload
-          showUploadList={false}
-          action={ChangeAvatarApi}
-          headers={{ Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` }}
-          onChange={onChange}
-        >
-          <div className={styles.button_view}>
-            <Button>
-              <UploadOutlined />
-              更换头像
-            </Button>
-          </div>
-        </Upload>
-      </ImgCrop>
-    </>
-  );
+  }
+  return Promise.resolve();
 };
 
-// interface SelectItem {
-//   label: string;
-//   key: string;
-// }
-
-// const validatorGeographic = (
-//   _: any,
-//   value: {
-//     province: SelectItem;
-//     city: SelectItem;
-//   },
-//   callback: (message?: string) => void,
-// ) => {
-//   const { province, city } = value;
-//
-//   if (!province.key) {
-//     callback('请输入您的所在省市!');
-//   }
-//
-//   if (!city.key) {
-//     callback('请输入您的街道地址!');
-//   }
-//
-//   callback();
-// };
-
-const validatorPhone = (rule: any, value: string, callback: (message?: string) => void) => {
-  const values = value.split('-');
-
-  if (!values[0]) {
-    callback('请输入您的区号!');
-  }
-
-  if (!values[1]) {
-    callback('请输入您的电话号码!');
-  }
-
-  callback();
-};
-
-interface BaseViewProps extends Partial<ConnectProps>{
-  userInfo?: UserCenterVO;
-}
-
-const BaseView: React.FC<BaseViewProps> = ({ userInfo,dispatch }) => {
-
-  const handleFinish = () => {
-    message.success('更新基本信息成功');
-  };
-
+const BaseView: React.FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  const { loading, run } = useRequest(updatePersonal, {
+    manual: true,
+    onSuccess: (result) => {
+      if (result) {
+        message.success('更新基本信息成功');
+      }else{
+        message.error('更新基本信息失败')
+      }
+    },
+    onError:() => message.error('更新基本信息失败')
+  });
+
+  if (!initialState?.currentUser) {
+    return null;
+  }
+
   const onChangeAvatar = (avatar: string) => {
     if (initialState?.currentUser) {
       setInitialState({ ...initialState, currentUser: { ...initialState.currentUser, avatar } });
     }
-    dispatch?.({
-      type: 'accountSettings/changeAvatar',
-      payload: avatar
-    });
+    // dispatch?.({
+    //   type: 'accountSettings/changeAvatar',
+    //   payload: avatar
+    // });
+  };
 
+  const handleFinish = (values: any) => {
+    run(values);
   };
 
   return (
@@ -131,7 +59,7 @@ const BaseView: React.FC<BaseViewProps> = ({ userInfo,dispatch }) => {
         <Form
           layout="vertical"
           onFinish={handleFinish}
-          initialValues={userInfo}
+          initialValues={initialState.currentUser}
           hideRequiredMark
         >
           {/* <Form.Item
@@ -162,7 +90,6 @@ const BaseView: React.FC<BaseViewProps> = ({ userInfo,dispatch }) => {
           <Form.Item
             name="sex"
             label="性别"
-            hasFeedback
             rules={[{ required: true, message: '请选择您的性别' }]}
           >
             <Select placeholder="请选择您的性别">
@@ -171,65 +98,14 @@ const BaseView: React.FC<BaseViewProps> = ({ userInfo,dispatch }) => {
               <Option value={2}>保密</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="个人简介"
-            rules={[
-              {
-                required: true,
-                message: '请输入个人简介!',
-              },
-            ]}
-          >
-            <Input.TextArea placeholder="个人简介" rows={4} />
+          <Form.Item name="companyName" label="公司">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item name="deptName" label="部门" hidden={!initialState.currentUser.deptName}>
+            <Input disabled />
           </Form.Item>
           <Form.Item
-            name="deptId"
-            label="部门"
-            rules={[
-              {
-                required: true,
-                message: '请输入您的国家或地区!',
-              },
-            ]}
-          >
-            <Select
-              style={{
-                maxWidth: 220,
-              }}
-            >
-              <Option value="China">中国</Option>
-            </Select>
-          </Form.Item>
-         {/* <Form.Item
-            name="geographic"
-            label="所在省市"
-            rules={[
-              {
-                required: true,
-                message: '请输入您的所在省市!',
-              },
-              {
-                validator: validatorGeographic,
-              },
-            ]}
-          >
-            <GeographicView />
-          </Form.Item> */}
-         {/* <Form.Item
-            name="address"
-            label="街道地址"
-            rules={[
-              {
-                required: true,
-                message: '请输入您的街道地址!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item> */}
-          <Form.Item
-            name="phone"
+            name="tel"
             label="联系电话"
             rules={[
               {
@@ -243,28 +119,33 @@ const BaseView: React.FC<BaseViewProps> = ({ userInfo,dispatch }) => {
           >
             <PhoneView />
           </Form.Item>
+          <Form.Item
+            name="description"
+            label="个人简介"
+            rules={[
+              {
+                required: true,
+                message: '请输入个人简介!',
+              },
+            ]}
+          >
+            <Input.TextArea placeholder="个人简介" rows={4} />
+          </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" type="primary">
+            <Button htmlType="submit" type="primary" loading={loading}>
               更新基本信息
             </Button>
           </Form.Item>
         </Form>
       </div>
       <div className={styles.right}>
-        <AvatarView avatar={userInfo?.avatar || DEFAULT_AVATAR} onChangeAvatar={onChangeAvatar} />
+        <AvatarView
+          avatar={initialState.currentUser.avatar || DEFAULT_AVATAR}
+          onChangeAvatar={onChangeAvatar}
+        />
       </div>
     </div>
   );
 };
 
-export default connect(
-  ({
-     userCenter,
-   }: {
-    userCenter: {
-      userInfo: UserCenterVO;
-    };
-  }) => ({
-    userInfo: userCenter.userInfo,
-  }),
-)(BaseView);
+export default BaseView;

@@ -21,9 +21,9 @@ export interface GlobalHeaderRightProps {
 //   const { query, pathname } = history.location;
 //   const { redirect } = query;
 //   // Note: There may be security issues, please note
-//   if (window.location.pathname !== '/user/login' && !redirect) {
+//   if (window.location.pathname !== '/User/login' && !redirect) {
 //     history.replace({
-//       pathname: '/user/login',
+//       pathname: '/User/login',
 //       search: stringify({
 //         redirect: pathname,
 //       }),

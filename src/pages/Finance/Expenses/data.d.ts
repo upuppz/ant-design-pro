@@ -1,5 +1,4 @@
 export interface QueryParams {
-  uid: number,
   status?: string;
   name?: string;
   desc?: string;

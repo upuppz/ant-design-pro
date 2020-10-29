@@ -2,10 +2,10 @@ import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
 export default {
   siderWidth: 228,
-  navTheme: 'light',
+  navTheme: 'dark',
   // 拂晓蓝
   primaryColor: '#1890ff',
-  layout: 'mix',
+  layout: 'top',
   contentWidth: 'Fluid',
   fixedHeader: false,
   fixSiderbar: true,
@@ -14,9 +14,10 @@ export default {
     locale: false,
   },
   title: 'Ant Design Pro',
-  pwa: false,
+  pwa: true,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
+  "splitMenus": false
 } as LayoutSettings & {
   pwa: boolean;
 };

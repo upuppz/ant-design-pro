@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useModel } from '@@/plugin-model/useModel';
 import { Card, List, Statistic, Tag, Typography } from 'antd';
 import { QueryFilter, ProFormSelect, ProFormDateRangePicker } from '@ant-design/pro-form';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -17,15 +16,9 @@ const targetTypeEnum = {
 };
 
 export default (): React.ReactNode => {
-  const { initialState } = useModel('@@initialState');
-  if (!initialState?.currentUser) {
-    return null;
-  }
-
   const [extraCosts, setExtraCosts] = useState({});
   const [data, setData] = useState<Array<ItemType>>([]);
-  const [page, setPage] = useState<PaginationProps & { uid: number }>({
-    uid: initialState.currentUser.userId,
+  const [page, setPage] = useState<PaginationProps>({
     pageSize: 10,
     current: 1,
     total: 0,
@@ -37,7 +30,7 @@ export default (): React.ReactNode => {
         setData(res.data);
         setPage({ ...page, current: res.current, total: res.total });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
@@ -47,7 +40,7 @@ export default (): React.ReactNode => {
     extraCost()
       .then((res) => {
         const json = {};
-        res.forEach((item: { id: string | number; name: any }) => {
+        res.data.forEach((item: { id: string | number; name: any }) => {
           json[item.id] = item.name;
         });
         setExtraCosts(json);
@@ -99,7 +92,12 @@ export default (): React.ReactNode => {
                   <>
                     <p className={styles.itemNo}>No.{item.id}</p>
                     <span className={styles.targetText}>{targetTypeEnum[item.targetType]}</span>
-                    <Statistic className={styles.feeText} valueStyle={{ color: '#3f8600' }} value={item.fee} precision={2} />
+                    <Statistic
+                      className={styles.feeText}
+                      valueStyle={{ color: '#3f8600' }}
+                      value={item.fee}
+                      precision={2}
+                    />
                   </>
                 }
                 description={handleExtraCosts(item.extraCost)}

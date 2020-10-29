@@ -1,9 +1,9 @@
 import { request } from 'umi';
-import { ItemType, QueryParams } from './data';
 import { RequestData } from '@ant-design/pro-table/lib/useFetchData';
+import { ItemType, QueryParams } from './data';
 
 export async function query(params: QueryParams):Promise<RequestData<ItemType>> {
-  return request(`/upms/walletExpenditure/${params.uid}`, {
+  return request('/upms/walletExpenditure/my', {
     params,
     // @ts-ignore
     skipUnpack: true

@@ -1,28 +1,27 @@
 import { Button, Tag, Timeline } from 'antd';
 import React from 'react';
-
-import { Dispatch } from 'umi';
 import {
   DesktopOutlined,
-  CloseCircleOutlined,
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   ApiOutlined,
   EnvironmentOutlined,
   ChromeOutlined,
+  LoadingOutlined,
+  StopOutlined,
+  TagOutlined,
 } from '@ant-design/icons';
+import { connect } from '@@/plugin-dva/exports';
+import { Dispatch } from '@@/plugin-dva/connect';
 import { ModalState } from '../../model';
 
-const Articles: React.FC<ModalState & { dispatch: Dispatch; loading: boolean }> = ({
-  logs,
-  dispatch,
-  loading,
-  logsCurrent,
-  logsPages,
-}) => {
+interface PageProps extends ModalState {
+  dispatch?: Dispatch;
+  loading?: boolean;
+  finished?: boolean;
+}
 
-
-
+const Articles: React.FC<Partial<PageProps>> = ({ logs, dispatch, loading, finished }) => {
   const statusColorHandler = (status: number): string => {
     if (status === 0) {
       return 'green';
@@ -44,21 +43,38 @@ const Articles: React.FC<ModalState & { dispatch: Dispatch; loading: boolean }> 
   };
 
   const onLoadMore = () => {
-    dispatch({
-      type: 'userCenter/listLoginLog',
+    dispatch?.({
+      type: 'accountCenter/listLoginLog',
     });
+  };
+
+  const pendingHandler = () => {
+    if (finished && loading) {
+      return <Tag color="blue"> 加载中...</Tag>;
+    }
+    if (!finished && !loading) {
+      return <Tag color="blue">已加载完所有...</Tag>;
+    }
+    return true;
   };
 
   return (
     <>
       <Timeline
         mode="left"
-        pending={
-          logsCurrent < logsPages ? true : (
-            <Tag color="blue">{loading ? '加载中...' : '已加载完所有...'}</Tag>
+        pending={pendingHandler()}
+        pendingDot={
+          // eslint-disable-next-line no-nested-ternary
+          finished ? (
+            loading ? (
+              <LoadingOutlined style={{ fontSize: '16px' }} />
+            ) : (
+              <TagOutlined style={{ fontSize: '16px' }} />
+            )
+          ) : (
+            <StopOutlined style={{ fontSize: '16px' }} />
           )
         }
-        pendingDot={loading ? null : <CloseCircleOutlined style={{ fontSize: '16px' }} />}
       >
         {logs?.map((value) => {
           return (
@@ -133,7 +149,7 @@ const Articles: React.FC<ModalState & { dispatch: Dispatch; loading: boolean }> 
           lineHeight: '32px',
         }}
       >
-        {logsCurrent < logsPages ? (
+        {finished ? (
           <Button onClick={onLoadMore} loading={loading}>
             加载更多
           </Button>
@@ -143,4 +159,17 @@ const Articles: React.FC<ModalState & { dispatch: Dispatch; loading: boolean }> 
   );
 };
 
-export default Articles;
+export default connect(
+  ({
+    accountCenter,
+    loading,
+  }: {
+    accountCenter: ModalState;
+    loading: { effects: { [key: string]: boolean } };
+    infoLoading: { effects: { [key: string]: boolean } };
+  }) => ({
+    logs: accountCenter.logs,
+    finished: accountCenter.logsCurrent <= accountCenter.logsPages,
+    loading: loading.effects['accountCenter/listLoginLog'],
+  }),
+)(Articles);

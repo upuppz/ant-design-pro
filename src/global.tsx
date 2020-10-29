@@ -9,12 +9,12 @@ const isHttps = document.location.protocol === 'https:';
 
 // if pwa is true
 if (pwa) {
-  // Notify user if offline now
+  // Notify User if offline now
   window.addEventListener('sw.offline', () => {
     message.warning(useIntl().formatMessage({ id: 'app.pwa.offline' }));
   });
 
-  // Pop up a prompt on the page asking the user if they want to use the latest version
+  // Pop up a prompt on the page asking the User if they want to use the latest version
   window.addEventListener('sw.updated', (event: Event) => {
     const e = event as CustomEvent;
     const reloadSW = async () => {

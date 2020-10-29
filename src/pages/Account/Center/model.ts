@@ -1,9 +1,8 @@
 import { Reducer, Effect } from 'umi';
-import { LoginLog, UserCenterVO } from './data';
-import { listLoginLog, getUserInfo } from './service';
+import { LoginLog } from './data';
+import { listLoginLog } from './service';
 
 export interface ModalState {
-  userInfo?: Partial<UserCenterVO>;
   logs: LoginLog[];
   // 当前页
   logsCurrent: number;
@@ -18,17 +17,14 @@ export interface ModelType {
   state: ModalState;
   effects: {
     listLoginLog: Effect;
-    getUserInfo: Effect;
   };
   reducers: {
     saveLoginLog: Reducer<ModalState>;
-    saveUserInfo: Reducer<ModalState>;
-    changeAvatar: Reducer<ModalState>;
   };
 }
 
 const Model: ModelType = {
-  namespace: 'userCenter',
+  namespace: 'accountCenter',
   state: {
     logs: [],
     logsCurrent: 0,
@@ -49,36 +45,13 @@ const Model: ModelType = {
         },
       });
     },
-    *getUserInfo(_, { call, put, select }) {
-      const userInfo = yield select((state: any) => state[Model.namespace].userInfo);
-      if (!userInfo) {
-        const response = yield call(getUserInfo);
-        yield put({
-          type: 'saveUserInfo',
-          payload: response.data,
-        });
-      }
-    },
   },
-
   reducers: {
     saveLoginLog(state, action) {
       return {
         ...(state as ModalState),
         ...action.payload,
         logs: state?.logs.concat(action.payload.logs),
-      };
-    },
-    saveUserInfo(state, action) {
-      return {
-        ...(state as ModalState),
-        userInfo: action.payload,
-      };
-    },
-    changeAvatar(state, action) {
-      return {
-        ...(state as ModalState),
-        userInfo: { ...state?.userInfo, avatar: action.payload },
       };
     },
   },
