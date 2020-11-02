@@ -151,4 +151,12 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  define: {
+    UAA: {
+      clientId: 'witpark-manage',
+      uri: 'http://localhost:10000/uaa/',
+      callback: 'http://localhost:8000',
+      scope: 'manage',
+    },
+  },
 });
