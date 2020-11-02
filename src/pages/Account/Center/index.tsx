@@ -1,8 +1,7 @@
-import { HomeOutlined, ClusterOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Divider, Row, Tag } from 'antd';
+import { ClusterOutlined, PhoneOutlined } from '@ant-design/icons';
+import { Card, Col, Divider, Row, Tag } from 'antd';
 import React, { useEffect,  useState } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
-import { Link } from 'umi';
 import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import { useModel } from '@@/plugin-model/useModel';
 import { ConnectRC } from '@@/plugin-dva/connect';
@@ -85,15 +84,13 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
             marginRight: 8,
           }}
         />
-        {currentUser.deptName}
+        {currentUser?.companyName} - {currentUser?.deptName}
       </p>
       <p>
-        <HomeOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
-        {currentUser.buildingNames?.join()}
+        <PhoneOutlined  style={{
+          marginRight: 8,
+        }}/>
+        {currentUser?.tel}
       </p>
     </div>
   );
@@ -110,7 +107,7 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
   return (
     <GridContent>
       <Row gutter={24}>
-        <Col lg={7} md={24}>
+        <Col lg={7} md={24}  style={{ width: '100%' }}>
           <Card bordered={false} style={{ marginBottom: 24 }}>
             <div>
               <div className={styles.avatarHolder}>
@@ -124,7 +121,7 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
               <Divider style={{ marginTop: 16 }} dashed />
               <div className={styles.team}>
                 <div className={styles.teamTitle}>快捷方式</div>
-                <Row gutter={36}>
+                {/* <Row gutter={36}>
                   <Col span={24}>
                     <Link to="#">
                       <Avatar
@@ -152,7 +149,7 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
                       骗你来学计算机
                     </Link>
                   </Col>
-                </Row>
+                </Row> */}
               </div>
             </div>
           </Card>

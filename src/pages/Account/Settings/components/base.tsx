@@ -3,10 +3,10 @@ import React from 'react';
 import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import { useModel } from '@@/plugin-model/useModel';
 import AvatarView from '@/pages/Account/Settings/components/AvatarView';
+import { useRequest } from 'umi';
+import { updatePersonal } from '@/pages/Account/Settings/service';
 import PhoneView from './PhoneView';
 import styles from './BaseView.less';
-import { useRequest } from '@@/plugin-request/request';
-import { updatePersonal } from '@/pages/Account/Settings/service';
 
 const { Option } = Select;
 
