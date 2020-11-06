@@ -12,7 +12,7 @@ export default {
   menu: {
     locale: false,
   },
-  title: '智慧食堂管理系统',
+  title: '数字园区管理系统',
   pwa: true,
   iconfontUrl: '',
 } as LayoutSettings & {

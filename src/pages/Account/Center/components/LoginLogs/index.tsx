@@ -12,7 +12,7 @@ import {
   EnvironmentOutlined,
   ChromeOutlined,
 } from '@ant-design/icons';
-import { ListItemDataType } from '@/pages/account/center/data';
+import { ListItemDataType } from '@/pages/Account/Center/data';
 
 interface LoginLogProps {
   dispatch: Dispatch;

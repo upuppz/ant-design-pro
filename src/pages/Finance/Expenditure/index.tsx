@@ -3,7 +3,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
 import { Button, Form, Input, Modal, notification, Space, Tag, TreeSelect } from 'antd';
 import { listDeptTree } from '@/services/upms';
-import { all } from '@/pages/rst/extra-cost/service';
+import { all } from '@/pages/Rst/ExtraCost/service';
 import { TableListItem } from './data';
 import { dtoPage, refund as refundReq } from './service';
 
@@ -56,7 +56,7 @@ export default () => {
     },
     {
       title: '部门',
-      hideInSearch: true,
+      search: false,
       dataIndex: 'deptName',
     },
     {
@@ -91,8 +91,8 @@ export default () => {
       align: 'center',
       dataIndex: 'extraCost',
       renderText: (text: string) => {
-        const strings = text.split(',');
-        if (text.length > 0) {
+        const strings = text?.split(',');
+        if (text?.length > 0) {
           return strings.map((str: string) => extraCosts[str]).join(',');
         }
         return text;
@@ -103,7 +103,7 @@ export default () => {
     {
       title: '金额',
       align: 'center',
-      hideInSearch: true,
+      search: false,
       dataIndex: 'fee',
       render: (text) => <Tag color="success">{text}</Tag>,
     },
@@ -111,19 +111,19 @@ export default () => {
       title: '结余的金额',
       align: 'center',
       dataIndex: 'balance',
-      hideInSearch: true,
+      search: false,
       render: (text) => <Tag color="warning">{text}</Tag>,
     },
     {
       title: '备注',
       dataIndex: 'remark',
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       sorter: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '操作',

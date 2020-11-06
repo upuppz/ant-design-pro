@@ -52,7 +52,7 @@ const SalesCard = ({
 
   useEffect(() => {
     callHandleChange();
-    // console.log("callHandleChange")
+    // console.Log("callHandleChange")
   }, [dataLevel]);
 
   useEffect(() => {

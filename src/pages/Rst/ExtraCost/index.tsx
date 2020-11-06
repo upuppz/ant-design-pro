@@ -121,7 +121,7 @@ const TableList: React.FC = () => {
         rowKey="id"
         search={false}
         toolBarRender={(action, { selectedRowKeys }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="primary" key='create' onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
           selectedRowKeys && selectedRowKeys.length > 0 && (

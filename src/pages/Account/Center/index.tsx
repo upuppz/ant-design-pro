@@ -1,15 +1,15 @@
-import { HomeOutlined, FieldTimeOutlined, ClusterOutlined, TeamOutlined } from '@ant-design/icons';
+import { HomeOutlined, FieldTimeOutlined, ClusterOutlined, TeamOutlined, PhoneOutlined } from '@ant-design/icons';
 import { Card, Col, Divider, Row, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { useModel } from '@@/plugin-model/useModel';
 
-import { CenterModalState } from '@/pages/account/center/model';
+import { CenterModalState } from '@/pages/Account/Center/model';
 import { connect } from '@@/plugin-dva/exports';
 import { Dispatch } from '@@/plugin-dva/connect';
 import BaseView from './components/BaseView';
 import LoginLogs from './components/LoginLogs';
-import styles from './Center.less';
+import styles from './style.less';
 import 'antd/es/modal/style';
 
 type CenterState = 'base' | 'loginLogs' | 'projects';
@@ -20,7 +20,7 @@ const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal
 
   useEffect(() => {
     dispatch({
-      type: 'center/loginLog',
+      type: 'Center/loginLog',
     });
   }, []);
 
@@ -59,10 +59,10 @@ const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal
           </span>
         ),
       },
-      {
-        key: 'base',
-        tab: <span>基本设置</span>,
-      },
+      // {
+      //   key: 'base',
+      //   tab: <span>基本设置</span>,
+      // },
       /* {
          key: 'projects',
          tab: (
@@ -82,32 +82,28 @@ const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal
             marginRight: 8,
           }}
         />
-        {currentUser?.buildingName}
+        {currentUser?.companyName}{currentUser?.deptName?` - ${currentUser?.deptName}`:null}
       </p>
-      <p>
-        <ClusterOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
-        {currentUser?.deptName}
-      </p>
-      <p>
-        <FieldTimeOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
-        近一次登陆 <Tag>{currentUser?.lastLoginTime}</Tag>
-      </p>
-      <p>
-        <TeamOutlined
-          style={{
-            marginRight: 8,
-          }}
-        />
-        公司总人数 <Tag>10</Tag>
-      </p>
+      {
+        currentUser?.tel?
+          <p>
+            <PhoneOutlined  style={{
+              marginRight: 8,
+            }}/>
+            {currentUser?.tel}
+          </p>
+        :null
+      }
+
+    </div>
+  );
+
+  const renderTagList = () => (
+    <div className={styles.tags}>
+      <div className={styles.tagsTitle}>角色</div>
+      {(currentUser.roleNames || []).map((item, index) => (
+        <Tag key={index.toString()}>{item}</Tag>
+      ))}
     </div>
   );
 
@@ -125,6 +121,7 @@ const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal
                 </div>
                 {renderUserInfo()}
                 <Divider dashed />
+                {renderTagList()}
               </div>
             )}
           </Card>

@@ -4,21 +4,9 @@
 const UPMS_BASE = '/api/upms';
 export const UpmsApi = {
   /**
-   * 管理端用户API
-   */
-  current: `${UPMS_BASE}/user/current`,
-  /**
-   * 部门 API
-   */
-  dept: `${UPMS_BASE}/dept`,
-  /**
    * 登陆日志 API
    */
   loginLog: `${UPMS_BASE}/loginLog`,
-  /**
-   * 楼栋 API
-   */
-  building: `${UPMS_BASE}/building`,
   /**
    * 钱包出账 API
    */
@@ -53,12 +41,12 @@ export const GuestApi = {
   /**
    * 企业API
    */
-  employees: '/api/guests/enterprise',
+  employees: '/guests/enterprise',
 
   /**
    * 企业API
    */
-  guests: '/api/guests/enterprise/guests',
+  guests: '/guests/enterprise/guests',
 };
 
 /**

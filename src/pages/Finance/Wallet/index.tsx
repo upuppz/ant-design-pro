@@ -54,7 +54,7 @@ export default () => {
     },
     {
       title: '部门',
-      hideInSearch: true,
+      search: false,
       dataIndex: 'deptName',
     },
     {
@@ -95,14 +95,14 @@ export default () => {
       title: '创建时间',
       dataIndex: 'createdAt',
       sorter: true,
-      hideInSearch: true,
+      search: false,
       hideInForm: true,
     },
     {
       title: '更新时间',
       dataIndex: 'updatedAt',
       sorter: true,
-      hideInSearch: true,
+      search: false,
       hideInForm: true,
     },
     {

@@ -142,7 +142,7 @@ const TableList: React.FC = () => {
       title: '#',
       dataIndex: 'id',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
       valueType: 'index',
     },
     {
@@ -168,7 +168,7 @@ const TableList: React.FC = () => {
     {
       title: '设备密钥',
       dataIndex: 'secret',
-      hideInSearch: true,
+      search: false,
       rules: [
         {
           required: true,
@@ -226,7 +226,7 @@ const TableList: React.FC = () => {
       title: '串口模式',
       dataIndex: 'comModType',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '开门' },
         2: { text: '不输出' },
@@ -239,7 +239,7 @@ const TableList: React.FC = () => {
       title: '串口自定义',
       dataIndex: 'comModContent',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
         const status = form.getFieldValue('comModType');
         if (`${status}` !== '100') {
@@ -252,7 +252,7 @@ const TableList: React.FC = () => {
       title: '显示模式',
       dataIndex: 'displayModType',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '显示名字' },
         100: { text: '自定义' },
@@ -262,7 +262,7 @@ const TableList: React.FC = () => {
       title: '显示自定义',
       dataIndex: 'displayModContent',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
         const status = form.getFieldValue('displayModType');
         if (`${status}` !== '100') {
@@ -275,7 +275,7 @@ const TableList: React.FC = () => {
       title: '语音模式',
       dataIndex: 'ttsModType',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '不播报语音' },
         2: { text: '播报名字' },
@@ -286,7 +286,7 @@ const TableList: React.FC = () => {
       title: '语音自定义',
       dataIndex: 'ttsModContent',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
         const status = form.getFieldValue('ttsModType');
         if (`${status}` !== '100') {
@@ -299,7 +299,7 @@ const TableList: React.FC = () => {
       title: '陌生人开关',
       dataIndex: 'recStrangerType',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '不识别陌生人', status: 'DEFAULT' },
         2: { text: '识别陌生人', status: 'DEFAULT' },
@@ -309,7 +309,7 @@ const TableList: React.FC = () => {
       title: '陌生人判定次数',
       dataIndex: 'recStrangerTimesThreshold',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueType: 'digit',
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
         const status = form.getFieldValue('recStrangerType');
@@ -323,7 +323,7 @@ const TableList: React.FC = () => {
       title: '陌生人模式',
       dataIndex: 'ttsModStrangerType',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '不播报语音' },
         2: { text: '语音播报 “陌生人警报”' },
@@ -341,7 +341,7 @@ const TableList: React.FC = () => {
       title: '陌生人自定义',
       dataIndex: 'ttsModStrangerContent',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       renderFormItem: (item, { defaultRender, ...rest }, form) => {
         const recStrangerType = form.getFieldValue('recStrangerType');
         const ttsModStrangerType = form.getFieldValue('ttsModStrangerType');
@@ -355,7 +355,7 @@ const TableList: React.FC = () => {
       title: '识别距离',
       dataIndex: 'identifyDistance',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         0: { text: '无限制' },
         1: { text: '0.5米以内' },
@@ -368,7 +368,7 @@ const TableList: React.FC = () => {
       title: '识别间隔(秒)',
       dataIndex: 'saveIdentifyTime',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueType: 'digit',
       rules: [
         {
@@ -382,7 +382,7 @@ const TableList: React.FC = () => {
       title: '识别分数',
       dataIndex: 'identifyScores',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueType: 'digit',
       rules: [
         {
@@ -397,7 +397,7 @@ const TableList: React.FC = () => {
       title: '多人脸检测',
       dataIndex: 'multiplayerDetection',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '多人脸都识别' },
         2: { text: '最大人脸识别' },
@@ -407,7 +407,7 @@ const TableList: React.FC = () => {
       title: '识别等级',
       dataIndex: 'recRank',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '无活体识别' },
         2: { text: '单目活体识别' },
@@ -418,13 +418,13 @@ const TableList: React.FC = () => {
       title: '韦根输出',
       dataIndex: 'wg',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '身份证白名单',
       dataIndex: 'whitelist',
       hideInTable: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         1: { text: '关(默认)' },
         2: { text: '开' },
@@ -434,7 +434,7 @@ const TableList: React.FC = () => {
       title: '设备状态',
       dataIndex: 'status',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
       valueEnum: {
         0: { text: '等待同步中', status: 'Default' },
         1: { text: '正常', status: 'Success' },
@@ -445,25 +445,25 @@ const TableList: React.FC = () => {
       title: '注册人员数',
       dataIndex: 'personCount',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '设备IP',
       dataIndex: 'ip',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '设备版本',
       dataIndex: 'version',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '最近同步时间',
       dataIndex: 'lastSync',
       hideInForm: true,
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '操作',
@@ -515,7 +515,7 @@ const TableList: React.FC = () => {
         actionRef={actionRef}
         rowKey="id"
         toolBarRender={(action, { selectedRowKeys }) => [
-          <Button type="primary" onClick={() => handleModalVisible(true)}>
+          <Button type="primary" key='create' onClick={() => handleModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
           selectedRowKeys && selectedRowKeys.length > 0 && (

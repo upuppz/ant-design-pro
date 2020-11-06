@@ -17,7 +17,7 @@ const getBrowser = async () => {
     });
     return browser;
   } catch (error) {
-    // console.log(error)
+    // console.Log(error)
   }
 
   try {

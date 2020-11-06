@@ -7,42 +7,32 @@
  */
 export default {
   dev: {
-    '/api/fake_chart_data': {
-      target: 'https://proapi.azurewebsites.net',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-    '/api/auth/': {
-      target: 'http://localhost:10001',
-      changeOrigin: true,
-      pathRewrite: { '^/api/auth': '' },
-    },
-    '/api/upms/': {
-      target: 'http://localhost:10002',
-      changeOrigin: true,
-      pathRewrite: { '^/api/upms': '' },
-    },
-    '/api/guest/': {
-      target: 'http://localhost:10003',
-      changeOrigin: true,
-      pathRewrite: { '^/api/guest': '' },
-    },
-    '/api/device/': {
-      target: 'http://localhost:10004',
-      changeOrigin: true,
-      pathRewrite: { '^/api/device': '' },
-    },
-    '/api/rst/': {
-      target: 'http://localhost:10005',
-      changeOrigin: true,
-      pathRewrite: { '^/api/rst': '' },
-    },
-  },
-  test: {
+    // '/api/': {
+    //   target: 'https://proapi.azurewebsites.net',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
     '/api/': {
       target: 'http://localhost:10000',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
+    },
+    // '/upms/': {
+    //   target: 'http://localhost:10000',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
+    // '/rst/': {
+    //   target: 'http://localhost:10000',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
+  },
+  test: {
+    '/api/': {
+      target: 'https://preview.pro.ant.design',
+      changeOrigin: true,
+      pathRewrite: { '^': '' },
     },
   },
   pre: {

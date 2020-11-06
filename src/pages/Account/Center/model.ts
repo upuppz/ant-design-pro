@@ -49,10 +49,10 @@ const Model: EnterpriseModelType = {
       });
     },
     /* *changeAvatar(_, { put }) {
-       console.log('changeAvatar');
-       console.log(_);
+       console.Log('changeAvatar');
+       console.Log(_);
        const spreadElements = _;
-       console.log(spreadElements);
+       console.Log(spreadElements);
        yield put({
          type: 'saveAvatar',
          avatar: _.avatar,
@@ -72,9 +72,9 @@ const Model: EnterpriseModelType = {
       };
     },
     /* saveAvatar(state, action) {
-      console.log('changeAvatar');
-      console.log(state);
-      console.log(action);
+      console.Log('changeAvatar');
+      console.Log(state);
+      console.Log(action);
       return {
         ...(state as EnterpriseModalState),
         info: { ...state?.info, avatar: action.avatar },

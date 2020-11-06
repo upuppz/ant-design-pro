@@ -15,16 +15,16 @@ import {
 } from 'antd';
 import React, { FC } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { LikeItem } from '@/pages/finance/wallet/data';
+import { LikeItem } from '@/pages/Finance/Wallet/data';
 import moment from 'moment';
 import debounce from 'lodash/debounce';
-import { like } from '@/pages/finance/wallet/service';
-import { TableListItem } from '@/pages/rst/extra-cost/data';
+import { like } from '@/pages/Finance/Wallet/service';
+import { TableListItem } from '@/pages/Rst/ExtraCost/data';
 import { DiningRule } from '../rule/data';
 import { list as ruleList } from '../rule/service';
 import styles from './style.less';
 import { manual } from './service';
-import { all } from '../extra-cost/service';
+import { all } from '../ExtraCost/service';
 
 const dateFormat = 'YYYY-MM-DD';
 

@@ -1,93 +1,50 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { message, Modal, notification, Row } from 'antd';
-import { history, RequestConfig } from 'umi';
+import { Modal, notification, Row } from 'antd';
+import { RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-
-import { ACCESS_TOKEN, AUTHORITIES, EXPIRE_TIME, GOTO, REFRESH_TOKEN, TOKEN_TYPE } from '@/configs';
+import { ResponseError } from 'umi-request';
+import { getValidAccessToken, gotoLocal, gotoUaa, setAccessToken } from '@/utils/auth';
+import qs from 'qs';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { parse } from 'querystring';
+
+import { getCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
 
-function gotoCertification() {
-  localStorage.clear();
-  localStorage.setItem(
-    GOTO,
-    window.location.pathname + window.location.search + window.location.hash,
-  );
-  // @ts-ignore
-  window.location.href = `${UAA.uri}oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=all`;
-  return {};
-}
-
-export const getInitialState = async (): Promise<{
-  currentUser?: API.CurrentUser | undefined;
+export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
-  auth?: API.OAuth;
-  hasRoutes?: string[];
-}> => {
-  let accessToken = localStorage.getItem(ACCESS_TOKEN);
-  if (accessToken) {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-    const tokenType = localStorage.getItem(TOKEN_TYPE);
-    const expiresIn = localStorage.getItem(EXPIRE_TIME);
-    const authorities = JSON.parse(localStorage.getItem(AUTHORITIES) as string);
+  currentUser?: API.CurrentUserVO;
+}> {
+
+  // 授权回调
+  if (window.location.pathname === '/' && window.location.hash) {
+    const hashAccessToken = qs.parse(window.location.hash.substring(1));
+    setAccessToken((hashAccessToken as unknown) as AUTH.OAuth2AccessToken);
+    gotoLocal();
+    const currentUser = (await getCurrent()).data;
+    return { currentUser, settings: defaultSettings };
+  }
+
+  // 如果已经授权
+  const accessToken = getValidAccessToken();
+  if (accessToken.valid) {
+    const currentUser = (await getCurrent()).data;
     return {
-      // currentUser,
-      auth: { accessToken, refreshToken, tokenType, expiresIn },
-      hasRoutes: authorities,
+      currentUser,
       settings: defaultSettings,
     };
   }
 
-  if (history.location.pathname === '/') {
-    const msg = parse(history.location.hash.substring(1));
-    if (msg && Object.keys(msg).length > 0) {
-      accessToken = msg[ACCESS_TOKEN] as string;
-      localStorage.setItem(ACCESS_TOKEN, accessToken);
-      const refreshToken = msg[REFRESH_TOKEN] as string;
-      localStorage.setItem(REFRESH_TOKEN, refreshToken);
-      const tokenType = msg[TOKEN_TYPE] as string;
-      localStorage.setItem(TOKEN_TYPE, tokenType);
-      const current = new Date();
-      const expireTime = current.setTime(
-        current.getTime() + 1000 * parseInt(msg[EXPIRE_TIME] as string, 10),
-      );
-      localStorage.setItem(EXPIRE_TIME, expireTime.toString());
-      const authoritiesStr = msg[AUTHORITIES] as string;
-      const authorities = authoritiesStr.match(/(\w+:?)+/g);
-      localStorage.setItem(AUTHORITIES, JSON.stringify(authorities));
-      const goto = localStorage.getItem(GOTO);
-      if (goto && history.location.pathname !== goto) {
-        history.push(goto);
-      }
-      return {
-        // currentUser,
-        auth: { accessToken, refreshToken, tokenType, expiresIn: expireTime.toString() },
-        hasRoutes: authorities as string[],
-        settings: defaultSettings,
-      };
-    }
-  }
 
-  // 如果是登录页面，不执行
-  // if (history.location.pathname !== '/user/login') {
-  // if (!history.location.pathname.startsWith('/user')) {
-  /* try { */
-  // const currentUser = await queryCurrent();
-  // history.push('/user/login');
-  /* } catch (error) {
-    history.push('/user/login');
-  } */
-  // }
-  return gotoCertification();
-};
+  gotoUaa();
+  return {};
+}
 
 export const layout = ({
-  initialState,
-}: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
+                         initialState,
+                       }: {
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUserVO };
 }): BasicLayoutProps => {
   return {
     rightContentRender: () => <RightContent />,
@@ -117,33 +74,27 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-enum ErrorShowType {
-  SILENT = 0,
-  SUCCESS_MESSAGE = 1,
-  ERROR_MESSAGE = 2,
-  INFO_MESSAGE = 3,
-  WARN_MESSAGE = 4,
-  SUCCESS_NOTIFICATION = 5,
-  ERROR_NOTIFICATION = 6,
-  INFO_NOTIFICATION = 7,
-  WARN_NOTIFICATION = 6,
-  REDIRECT = 9,
-}
-
 let loginModel: any;
 
 export const request: RequestConfig = {
+  // prefix: 'http://localhost:10000',
   errorConfig: {
     adaptor: (resData) => {
-      const success = resData?.code ? resData?.code === '00000' : true;
-      return { errorMessage: resData?.msg, errorCode: resData?.code, success };
+      const success = resData.code ? resData.code === '00000' : true;
+      return success
+        ? { success }
+        : { errorMessage: resData.msg, errorCode: resData.code, success };
     },
+    errorPage: '/exception',
   },
+  // parseResponse: true,
   /**
    * 异常处理程序
    */
-  errorHandler: (error: any) => {
+  errorHandler: (error: ResponseError) => {
     const { response } = error;
+    console.log("===== errorHandler =======");
+    console.log(error);
     if (error.name === 'BizError') {
       const { code, data, msg } = error.data;
       if (code !== '00000') {
@@ -159,11 +110,14 @@ export const request: RequestConfig = {
             }
             break;
           default:
+            notification.error({
+              message: msg,
+              description: msg,
+            });
         }
       }
       throw error;
     } else if (response && response.status) {
-      const errorText = codeMessage[response.status] || response.statusText;
       const { status, url } = response;
       if (status === 401) {
         if (loginModel == null) {
@@ -175,7 +129,7 @@ export const request: RequestConfig = {
             okText: '重新登陆',
             cancelText: '留在当前',
             onOk() {
-              gotoCertification();
+              gotoUaa();
             },
             onCancel() {
               loginModel.destroy();
@@ -186,7 +140,7 @@ export const request: RequestConfig = {
       } else {
         notification.error({
           message: `请求错误 ${status}: ${url}`,
-          description: errorText,
+          description: codeMessage[response.status] || response.statusText,
         });
       }
     } else if (!response) {
@@ -198,7 +152,7 @@ export const request: RequestConfig = {
     return response;
   },
   // 中间件统一提示处理
-  middlewares: [
+  /* middlewares: [
     async (ctx, next) => {
       await next();
       const { res } = ctx;
@@ -248,14 +202,14 @@ export const request: RequestConfig = {
                 description: errorData,
               });
               break;
-            /* case ErrorShowType.REDIRECT:
+            /!* case ErrorShowType.REDIRECT:
             // @ts-ignore
             history.push({
               pathname: DEFAULT_ERROR_PAGE,
               query: { errorCode, errorMessage },
             });
             // redirect to error page
-            break; */
+            break; *!/
             default:
               message.error(errorMessage);
               break;
@@ -263,14 +217,17 @@ export const request: RequestConfig = {
         }
       }
     },
-  ],
+  ], */
   requestInterceptors: [
-    (url, options) => {
-      const accessToken = localStorage.getItem(ACCESS_TOKEN);
-      const tokenType = localStorage.getItem(TOKEN_TYPE);
-      if (accessToken) {
-        // eslint-disable-next-line no-param-reassign
-        options.headers = { Authorization: `${tokenType} ${accessToken}` };
+    (url, _options) => {
+      const options = _options || {};
+      const token = getValidAccessToken();
+      if (token.valid) {
+        // @ts-ignore
+        options.headers.Authorization = `${token.tokenType} ${token.accessToken}`;
+      } else {
+        // 凭证已过期，去认证中心获取授权信息
+        gotoUaa();
       }
       return { url, options };
     },

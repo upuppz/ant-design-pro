@@ -49,7 +49,7 @@ const GlobalHeaderRight: React.FC = () => {
           ]
         }
         // onSearch={value => {
-        //   //console.log('input', value);
+        //   //console.Log('input', value);
         // }}
       />
       {/* <Tooltip title="使用文档">
@@ -69,7 +69,7 @@ const GlobalHeaderRight: React.FC = () => {
         </span>
       )}
       <span>
-        <Tag color="green">食堂版</Tag>
+        <Tag color="green">运维版</Tag>
       </span>
       {/* <SelectLang className={styles.action}/> */}
     </Space>

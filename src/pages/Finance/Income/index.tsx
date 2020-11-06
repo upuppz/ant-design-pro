@@ -39,7 +39,7 @@ export default () => {
     },
     {
       title: '部门',
-      hideInSearch: true,
+      search: false,
       dataIndex: 'deptName',
     },
     {
@@ -73,7 +73,7 @@ export default () => {
     {
       title: '金额',
       align: 'center',
-      hideInSearch: true,
+      search: false,
       dataIndex: 'fee',
       render: (text) => <Tag color="success">{text}</Tag>,
     },
@@ -81,19 +81,19 @@ export default () => {
       title: '结余的金额',
       align: 'center',
       dataIndex: 'balance',
-      hideInSearch: true,
+      search: false,
       render: (text) => <Tag color="warning">{text}</Tag>,
     },
     {
       title: '备注',
       dataIndex: 'remark',
-      hideInSearch: true,
+      search: false,
     },
     {
       title: '创建时间',
       dataIndex: 'createdAt',
       sorter: true,
-      hideInSearch: true,
+      search: false,
     },
   ];
 
