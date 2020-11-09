@@ -5,7 +5,7 @@ import { request } from 'umi';
 // }
 
 export async function getCurrent() {
-  return request<API.Ret<API.CurrentUserVO>>('/upms/my');
+  return request<API.Ret<API.CurrentUserVO>>('/api/upms/my?userType=1');
 }
 
 export async function queryNotices(): Promise<any> {

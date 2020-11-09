@@ -53,14 +53,14 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
           </span>
         ),
       },
-      {
-        key: 'applications',
-        tab: (
-          <span>
-            应用 <span style={{ fontSize: 14 }}>(1)</span>
-          </span>
-        ),
-      },
+      // {
+      //   key: 'applications',
+      //   tab: (
+      //     <span>
+      //       应用 <span style={{ fontSize: 14 }}>(1)</span>
+      //     </span>
+      //   ),
+      // },
       // {
       //   key: 'base1',
       //   tab: <span>通知</span>,

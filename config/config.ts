@@ -10,7 +10,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
+    name: '数字园区管理系统',
     locale: false,
     ...defaultSettings,
   },
@@ -72,21 +72,21 @@ export default defineConfig({
         },
       ],
     },
-    {
-      path: '/admin',
-      name: 'admin',
-      icon: 'crown',
-      access: 'canAdmin',
-      component: './Admin',
-      routes: [
-        {
-          path: '/admin/sub-page',
-          name: 'sub-page',
-          icon: 'smile',
-          component: './Welcome',
-        },
-      ],
-    },
+    // {
+    //   path: '/admin',
+    //   name: 'admin',
+    //   icon: 'crown',
+    //   access: 'canAdmin',
+    //   component: './Admin',
+    //   routes: [
+    //     {
+    //       path: '/admin/sub-page',
+    //       name: 'sub-page',
+    //       icon: 'smile',
+    //       component: './Welcome',
+    //     },
+    //   ],
+    // },
     {
       path: '/',
       redirect: '/welcome',
@@ -110,8 +110,8 @@ export default defineConfig({
   define: {
     UAA: {
       clientId: 'witpark-personal',
-      uri: 'http://localhost:10000/uaa/',
-      callback: 'http://localhost:8000',
+      uri: 'http://account.anzepal.com',
+      callback: 'http://witpark.anzepal.com',
       scope: 'personal',
     },
   },

@@ -76,7 +76,7 @@ export function gotoUaa(): void {
     window.location.pathname + window.location.search + window.location.hash,
   );
   // @ts-ignore
-  window.location.href = `${UAA.uri}oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
+  window.location.href = `${UAA.uri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
 }
 
 /**

@@ -12,23 +12,23 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
-    '/upms/': {
-      target: 'http://localhost:10000',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-    '/rst/': {
-      target: 'http://localhost:10000',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
+    // '/upms/': {
+    //   target: 'http://localhost:10000',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
+    // '/rst/': {
+    //   target: 'http://localhost:10000',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
   },
   test: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
+    // '/api/': {
+    //   target: 'https://preview.pro.ant.design',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^': '' },
+    // },
   },
   pre: {
     '/api/': {

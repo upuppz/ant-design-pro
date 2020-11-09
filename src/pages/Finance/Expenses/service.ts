@@ -3,7 +3,7 @@ import { RequestData } from '@ant-design/pro-table/lib/useFetchData';
 import { ItemType, QueryParams } from './data';
 
 export async function query(params: QueryParams):Promise<RequestData<ItemType>> {
-  return request('/upms/walletExpenditure/my', {
+  return request('/api/upms/walletExpenditure/my', {
     params,
     // @ts-ignore
     skipUnpack: true
@@ -12,6 +12,6 @@ export async function query(params: QueryParams):Promise<RequestData<ItemType>> 
 
 // 所有额外收费项
 export async function extraCost() {
-  return request(`/rst/extraCost/all`);
+  return request(`/api/rst/extraCost/all`);
 }
 

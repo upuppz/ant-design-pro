@@ -13,9 +13,9 @@ export default {
   menu: {
     locale: false,
   },
-  title: 'Ant Design Pro',
+  title: '数字园区管理系统',
   pwa: true,
-  logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+  logo: '/logo.svg',
   iconfontUrl: '',
   "splitMenus": false
 } as LayoutSettings & {
