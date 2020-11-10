@@ -85,7 +85,7 @@ export function gotoUaa(): void {
 export function loginOut(): void {
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
   // @ts-ignore
-  window.location.href = `${UAA.uri}logout?${ACCESS_TOKEN}=${accessToken}`;
+  window.location.href = `${UAA.uri}/logout?${ACCESS_TOKEN}=${accessToken}`;
   localStorage.clear();
 };
 
