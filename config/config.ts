@@ -154,8 +154,8 @@ export default defineConfig({
   define: {
     UAA: {
       clientId: 'witpark-manage',
-      uri: 'http://account.test.com/',
-      callback: 'http://localhost:8000',
+      uri: 'http://account.anzepal.com',
+      callback: 'http://admin.anzepal.com',
       scope: 'manage',
     },
   },

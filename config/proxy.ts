@@ -15,18 +15,8 @@ export default {
     '/api/': {
       target: 'http://localhost:10000',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^': '' },
     },
-    // '/upms/': {
-    //   target: 'http://localhost:10000',
-    //   changeOrigin: true,
-    //   pathRewrite: { '^': '' },
-    // },
-    // '/rst/': {
-    //   target: 'http://localhost:10000',
-    //   changeOrigin: true,
-    //   pathRewrite: { '^': '' },
-    // },
   },
   test: {
     '/api/': {
