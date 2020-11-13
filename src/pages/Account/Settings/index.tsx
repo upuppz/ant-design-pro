@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
+import { history } from 'umi';
 import BaseView from './components/base';
 import BindingView from './components/binding';
 import NotificationView from './components/notification';
@@ -29,9 +30,10 @@ class Settings extends Component<any, SettingsState> {
       binding: '账号绑定',
       notification: '新消息通知',
     };
+
     this.state = {
       menuMap,
-      selectKey: 'base',
+      selectKey: history?.location?.state?.selectKey ||'base',
     };
   }
 

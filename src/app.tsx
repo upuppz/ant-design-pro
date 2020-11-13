@@ -172,21 +172,6 @@ export const request: RequestConfig = {
     }
     return response;
   },
-  // 中间件统一提示处理
-  // middlewares: [
-  //   async (ctx, next) => {
-  //     await next();
-  //     // console.log("middlewares=========")
-  //     // console.log(ctx)
-  //     // console.log(ctx.req)
-  //     // console.log(ctx.res)
-  //     // @ts-ignore
-  //     if (ctx?.req?.options?.skipUnpack) {
-  //       return;
-  //     }
-  //     ctx.res = ctx.res.data;
-  //   },
-  // ],
   requestInterceptors: [
     (url, _options) => {
       const options = _options || {};

@@ -1,17 +1,18 @@
-import { ClusterOutlined, PhoneOutlined } from '@ant-design/icons';
-import { Card, Col, Divider, Row, Tag } from 'antd';
+import { ClusterOutlined, PhoneOutlined, UnlockOutlined } from '@ant-design/icons';
+import { Avatar, Card, Col, Divider, Row, Tag } from 'antd';
 import React, { useEffect,  useState } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import DEFAULT_AVATAR from '@/assets/default_avatar.png';
 import { useModel } from '@@/plugin-model/useModel';
 import { ConnectRC } from '@@/plugin-dva/connect';
 import { connect } from '@@/plugin-dva/exports';
+import { Link } from 'umi';
 import { ModalState } from './model';
 import LoginLogs from './components/LoginLogs';
 import styles from './style.less';
-import Applications from './components/Applications';
+import Faces from './components/Faces';
 
-type CenterState = 'loginLogs' | 'applications';
+type CenterState = 'loginLogs' | 'faces';
 
 const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
   const [tabKey, setTabKey] = useState<CenterState>('loginLogs');
@@ -37,8 +38,8 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
     if (tabKey === 'loginLogs') {
       return <LoginLogs />;
     }
-    if (tabKey === 'applications') {
-      return <Applications />;
+    if (tabKey === 'faces') {
+      return <Faces />;
     }
     return null;
   };
@@ -53,14 +54,14 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
           </span>
         ),
       },
-      // {
-      //   key: 'applications',
-      //   tab: (
-      //     <span>
-      //       应用 <span style={{ fontSize: 14 }}>(1)</span>
-      //     </span>
-      //   ),
-      // },
+      {
+        key: 'faces',
+        tab: (
+          <span>
+            人脸识别
+          </span>
+        ),
+      },
       // {
       //   key: 'base1',
       //   tab: <span>通知</span>,
@@ -121,35 +122,20 @@ const Center: ConnectRC<{ logsTotal: number }> = ({ logsTotal, dispatch }) => {
               <Divider style={{ marginTop: 16 }} dashed />
               <div className={styles.team}>
                 <div className={styles.teamTitle}>快捷方式</div>
-                {/* <Row gutter={36}>
-                  <Col span={24}>
-                    <Link to="#">
+                 <Row gutter={36}>
+                  <Col span={12}>
+                    <Link to={{
+                      pathname:"/account/settings",
+                      state: { selectKey: 'security' },
+                    }}>
                       <Avatar
                         size="small"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png"
+                        icon={<UnlockOutlined />}
                       />
-                      科学搬砖组
+                      重置密码
                     </Link>
                   </Col>
-                  <Col span={24}>
-                    <Link to="#">
-                      <Avatar
-                        size="small"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png"
-                      />
-                      全组都是吴彦祖
-                    </Link>
-                  </Col>
-                  <Col span={24}>
-                    <Link to="#">
-                      <Avatar
-                        size="small"
-                        src="https://gw.alipayobjects.com/zos/rmsportal/kZzEzemZyKLKFsojXItE.png"
-                      />
-                      骗你来学计算机
-                    </Link>
-                  </Col>
-                </Row> */}
+                </Row>
               </div>
             </div>
           </Card>

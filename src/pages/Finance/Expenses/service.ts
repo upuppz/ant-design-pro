@@ -4,9 +4,7 @@ import { ItemType, QueryParams } from './data';
 
 export async function query(params: QueryParams):Promise<RequestData<ItemType>> {
   return request('/api/upms/walletExpenditure/my', {
-    params,
-    // @ts-ignore
-    skipUnpack: true
+    params
   });
 }
 

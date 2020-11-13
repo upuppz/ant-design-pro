@@ -1,6 +1,7 @@
 import { Reducer, Effect } from 'umi';
+import { UploadFile } from 'antd/lib/upload/interface';
 import { LoginLog } from './data';
-import { listLoginLog } from './service';
+import { listFace, listLoginLog } from './service';
 
 export interface ModalState {
   logs: LoginLog[];
@@ -10,6 +11,8 @@ export interface ModalState {
   logsPages: number;
   // 总数
   logsTotal: number;
+  // 人脸
+  faces: UploadFile[];
 }
 
 export interface ModelType {
@@ -17,9 +20,12 @@ export interface ModelType {
   state: ModalState;
   effects: {
     listLoginLog: Effect;
+    listFace: Effect;
+    updateListFace: Effect;
   };
   reducers: {
     saveLoginLog: Reducer<ModalState>;
+    saveListFace: Reducer<ModalState>;
   };
 }
 
@@ -30,9 +36,10 @@ const Model: ModelType = {
     logsCurrent: 0,
     logsPages: 1,
     logsTotal: 0,
+    faces: [],
   },
   effects: {
-    *listLoginLog(_, { call, put, select }) {
+    * listLoginLog(_, { call, put, select }) {
       const current = yield select((state: any) => state[Model.namespace].logsCurrent);
       const response = yield call(listLoginLog, { current: current + 1 });
       yield put({
@@ -45,6 +52,23 @@ const Model: ModelType = {
         },
       });
     },
+    * listFace(_, { call, put }) {
+      const response = yield call(listFace);
+      let payload = response.data || [];
+      payload = payload.map((val: UploadFile) => {
+        return { ...val, thumbUrl: `data:image/jpeg;base64,${val.thumbUrl}` };
+      });
+      yield put({
+        type: 'saveListFace',
+        payload,
+      });
+    },
+    * updateListFace({ payload }, { put }) {
+      yield put({
+        type: 'saveListFace',
+        payload,
+      });
+    },
   },
   reducers: {
     saveLoginLog(state, action) {
@@ -52,6 +76,12 @@ const Model: ModelType = {
         ...(state as ModalState),
         ...action.payload,
         logs: state?.logs.concat(action.payload.logs),
+      };
+    },
+    saveListFace(state, action) {
+      return {
+        ...(state as ModalState),
+        faces: action.payload,
       };
     },
   },
