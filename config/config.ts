@@ -167,19 +167,19 @@ export default defineConfig({
         },
       ],
     },
-    // {
-    //   path: '/device',
-    //   name: '设备管理',
-    //   icon: 'crown',
-    //   routes: [
-    //     {
-    //       path: '/device/face',
-    //       name: '人脸设备',
-    //       icon: 'smile',
-    //       component: './Device/Face',
-    //     },
-    //   ],
-    // },
+    {
+      path: '/device',
+      name: '设备管理',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/device/face',
+          name: '人脸设备',
+          icon: 'smile',
+          component: './Device/Face',
+        },
+      ],
+    },
     {
       component: './404',
     },

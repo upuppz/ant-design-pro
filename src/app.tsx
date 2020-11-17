@@ -112,7 +112,7 @@ export const request: RequestConfig = {
           default:
             notification.error({
               message: msg,
-              description: msg,
+              description: data,
             });
         }
       }

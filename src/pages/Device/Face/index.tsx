@@ -9,8 +9,9 @@ import { Button, Dropdown, Input, Menu, message, Tooltip, TreeSelect } from 'ant
 import React, { useEffect, useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
-
-import { listBuildingTree } from '@/services/upms';
+import { connect } from 'umi';
+import { ConnectProps, ModelState as BuildingModelState } from '@@/plugin-dva/connect';
+import { TableListItem as BuildingTableListItem } from '@/pages/Upms/Building/data';
 import CreateForm from './components/CreateForm';
 import UpdateForm from './components/UpdateForm';
 import { TableListItem } from './data';
@@ -20,10 +21,17 @@ import { add, list, remove, syncPerson, test, update } from './service';
  *
  * @param id
  */
-const handleSyncPerson = async (id: number | undefined) => {
+const handleSyncPerson = (id: number | undefined) => {
   const hide = message.loading('连接设备中,请稍等...', 0);
-  await syncPerson(id);
-  hide();
+  syncPerson(id)
+    .then(() => {
+      message.success('人员同步成功');
+      hide();
+    })
+    .catch(() => {
+      hide();
+    });
+
 };
 
 /**
@@ -35,7 +43,7 @@ const handleTest = async (id: number | undefined) => {
   try {
     const res = await test(id);
     hide();
-    if (res) {
+    if (res.data) {
       message.success('设备状态正常');
       return;
     }
@@ -123,18 +131,19 @@ const defaultInitialFormValues = {
 // 当前选中的楼栋信息
 let selectBuildingName: string | undefined;
 
-const TableList: React.FC = () => {
+interface PageProps extends ConnectProps {
+  buildingTree: BuildingTableListItem[];
+}
+
+const TableList: React.FC<PageProps> = ({ buildingTree, dispatch }) => {
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [initialFormValues] = useState<TableListItem>(defaultInitialFormValues);
   const [updateFormValues, setUpdateFormValues] = useState<TableListItem | any>({});
-  const [buildingTree, setBuildingTree] = useState([]);
   const actionRef = useRef<ActionType>();
 
   useEffect(() => {
-    listBuildingTree().then((res) => {
-      setBuildingTree(res.data);
-    });
+    dispatch?.({ type: 'upmsBuilding/fetchTree' });
   }, []);
 
   const columns: ProColumns<TableListItem>[] = [
@@ -148,43 +157,51 @@ const TableList: React.FC = () => {
     {
       title: '设备名称',
       dataIndex: 'name',
-      rules: [
-        {
-          required: true,
-          message: '设备名称为必填项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '设备名称为必填项',
+          },
+        ],
+      },
     },
     {
       title: '设备序号',
       dataIndex: 'deviceKey',
-      rules: [
-        {
-          required: true,
-          message: '设备序号为必填项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '设备序号为必填项',
+          },
+        ],
+      },
     },
     {
       title: '设备密钥',
       dataIndex: 'secret',
       search: false,
-      rules: [
-        {
-          required: true,
-          message: '设备密钥为必填项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '设备密钥为必填项',
+          },
+        ],
+      },
     },
     {
       title: '设备类型',
       dataIndex: 'deviceType',
-      rules: [
-        {
-          required: true,
-          message: '设备类型为必填项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '设备类型为必填项',
+          },
+        ],
+      },
       valueEnum: {
         1: { text: '食堂' },
         2: { text: '门禁' },
@@ -193,12 +210,14 @@ const TableList: React.FC = () => {
     {
       title: '公司名称',
       dataIndex: 'companyName',
-      rules: [
-        {
-          required: true,
-          message: '公司名称为必填项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '公司名称为必填项',
+          },
+        ],
+      },
     },
     {
       title: '楼栋',
@@ -215,12 +234,14 @@ const TableList: React.FC = () => {
           />
         );
       },
-      rules: [
-        {
-          required: true,
-          message: '楼栋为必选项',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '楼栋为必选项',
+          },
+        ],
+      },
     },
     {
       title: '串口模式',
@@ -370,13 +391,15 @@ const TableList: React.FC = () => {
       hideInTable: true,
       search: false,
       valueType: 'digit',
-      rules: [
-        {
-          type: 'number',
-          max: 60,
-          message: '识别间隔最大为 60 秒',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            type: 'number',
+            max: 60,
+            message: '识别间隔最大为 60 秒',
+          },
+        ],
+      },
     },
     {
       title: '识别分数',
@@ -384,14 +407,16 @@ const TableList: React.FC = () => {
       hideInTable: true,
       search: false,
       valueType: 'digit',
-      rules: [
-        {
-          type: 'number',
-          max: 100,
-          min: 60,
-          message: '识别分数为 60 ~ 100',
-        },
-      ],
+      formItemProps: {
+        rules: [
+          {
+            type: 'number',
+            max: 100,
+            min: 60,
+            message: '识别分数为 60 ~ 100',
+          },
+        ],
+      },
     },
     {
       title: '多人脸检测',
@@ -564,7 +589,7 @@ const TableList: React.FC = () => {
               selectBuildingName = undefined;
               handleModalVisible(false);
               if (actionRef.current) {
-                actionRef.current.reloadAndRest();
+                actionRef.current.reload();
               }
             }
           }}
@@ -598,7 +623,7 @@ const TableList: React.FC = () => {
                 handleUpdateModalVisible(false);
                 setUpdateFormValues({});
                 if (actionRef.current) {
-                  actionRef.current.reloadAndRest();
+                  actionRef.current.reload();
                 }
               }
             }}
@@ -616,4 +641,11 @@ const TableList: React.FC = () => {
   );
 };
 
-export default TableList;
+export default connect(
+  ({
+     upmsBuilding,
+   }: {
+    upmsBuilding: BuildingModelState,
+  }) => ({
+    buildingTree: upmsBuilding.tree,
+  }))(TableList);

@@ -34,31 +34,6 @@ export const UpmsApi = {
   uploadAvatar: `${UPMS_BASE}/enterprise/upload`,
 };
 
-/**
- * 用户权限管理相关
- */
-export const GuestApi = {
-  /**
-   * 企业API
-   */
-  employees: '/guests/enterprise',
-
-  /**
-   * 企业API
-   */
-  guests: '/guests/enterprise/guests',
-};
-
-/**
- * 硬件设置相关
- */
-const DEVICE_BASE = '/api/device';
-export const DeviceApi = {
-  /**
-   * 腾达讯设备
-   */
-  tdxFace: `${DEVICE_BASE}/tdxFace`,
-};
 
 /**
  * 食堂相关
