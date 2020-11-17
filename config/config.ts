@@ -42,7 +42,7 @@ export default defineConfig({
       path: '/welcome',
       name: '首页',
       icon: 'smile',
-      component: './welcome',
+      component: './Welcome',
       /*access: 'authorityFilter',
         authority: ['ROLE_ADMIN', 'User'],
         */
@@ -62,24 +62,68 @@ export default defineConfig({
       ],
     },
     {
+      path: '/upms',
+      name: '用户管理',
+      icon: 'crown',
+      routes: [
+        {
+          path: '/upms/user',
+          name: '用户列表',
+          icon: 'smile',
+          component: './Upms/User',
+        },
+        {
+          path: '/upms/wallet',
+          name: '钱包列表',
+          icon: 'smile',
+          component: './Upms/Wallet',
+        },
+        {
+          path: '/upms/building',
+          name: '楼栋列表',
+          icon: 'smile',
+          component: './Upms/Building',
+        },
+        {
+          path: '/upms/dept',
+          name: '组织列表',
+          icon: 'smile',
+          component: './Upms/Dept',
+        },
+        {
+          path: '/upms/role',
+          name: '角色列表',
+          icon: 'smile',
+          component: './Upms/Role',
+        },
+        {
+          path: '/upms/permission',
+          name: '权限列表',
+          icon: 'smile',
+          component: './Upms/Permission',
+        },
+
+      ],
+    },
+    {
       path: '/finance',
       name: '财务管理',
       icon: 'crown',
       routes: [
         {
-          path: '/finance/Wallet',
+          path: '/finance/wallet',
           name: '钱包列表',
           icon: 'smile',
           component: './Finance/Wallet',
         },
         {
-          path: '/finance/Log',
+          path: '/finance/log',
           name: '资金流水',
           icon: 'smile',
           component: './Finance/Log',
         },
         {
-          path: '/finance/Income',
+          path: '/finance/income',
           name: '入账记录',
           icon: 'smile',
           component: './Finance/Income',

@@ -116,7 +116,6 @@ export const request: RequestConfig = {
             });
         }
       }
-      throw error;
     } else if (response && response.status) {
       const { status, url } = response;
       if (status === 401) {
@@ -149,7 +148,7 @@ export const request: RequestConfig = {
         message: '网络异常',
       });
     }
-    return response;
+    throw error;
   },
   // 中间件统一提示处理
   /* middlewares: [

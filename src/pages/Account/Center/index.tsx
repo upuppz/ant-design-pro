@@ -1,4 +1,4 @@
-import { HomeOutlined, FieldTimeOutlined, ClusterOutlined, TeamOutlined, PhoneOutlined } from '@ant-design/icons';
+import { HomeOutlined, PhoneOutlined } from '@ant-design/icons';
 import { Card, Col, Divider, Row, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
@@ -101,7 +101,7 @@ const Center: React.FC<{ logsTotal: number; dispatch: Dispatch }> = ({ logsTotal
   const renderTagList = () => (
     <div className={styles.tags}>
       <div className={styles.tagsTitle}>角色</div>
-      {(currentUser.roleNames || []).map((item, index) => (
+      {(currentUser?.roleNames || []).map((item, index) => (
         <Tag key={index.toString()}>{item}</Tag>
       ))}
     </div>
