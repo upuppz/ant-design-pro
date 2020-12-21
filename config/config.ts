@@ -198,8 +198,8 @@ export default defineConfig({
   define: {
     UAA: {
       clientId: 'witpark-manage',
-      uri: 'http://account.anzepal.com',
-      callback: 'http://admin.anzepal.com',
+      uri: 'http://sso.dsp.thspsp.com',
+      callback: 'http://dmp.dsp.thspsp.com',
       scope: 'manage',
     },
   },

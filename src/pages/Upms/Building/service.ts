@@ -27,7 +27,7 @@ export async function add(params: TableListItem) {
 }
 
 export async function update(params: TableListItem) {
-  return request(BASE_URL, {
+  return request(`${BASE_URL}/${params.id}`, {
     method: 'PUT',
     data: {
       ...params,
