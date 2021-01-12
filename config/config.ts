@@ -199,7 +199,9 @@ export default defineConfig({
     UAA: {
       clientId: 'witpark-manage',
       uri: 'http://sso.dsp.thspsp.com',
+      devUri: 'http://127.0.0.1:10002',
       callback: 'http://dmp.dsp.thspsp.com',
+      devCallback: 'http://localhost:8000',
       scope: 'manage',
     },
   },

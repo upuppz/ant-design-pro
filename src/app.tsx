@@ -1,16 +1,17 @@
 import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
+import type { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { Modal, notification, Row } from 'antd';
-import { RequestConfig } from 'umi';
+import type { RequestConfig } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { ResponseError } from 'umi-request';
+import type { ResponseError } from 'umi-request';
 import { getValidAccessToken, gotoLocal, gotoUaa, setAccessToken } from '@/utils/auth';
 import qs from 'qs';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
 import { getCurrent } from './services/user';
 import defaultSettings from '../config/defaultSettings';
+
 
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
@@ -87,7 +88,6 @@ export const request: RequestConfig = {
     },
     errorPage: '/exception',
   },
-  // parseResponse: true,
   /**
    * 异常处理程序
    */
@@ -110,14 +110,11 @@ export const request: RequestConfig = {
             }
             break;
           default:
-            notification.error({
-              message: msg,
-              description: data,
-            });
+            // 做些什么
         }
       }
     } else if (response && response.status) {
-      const { status, url } = response;
+      const { status } = response;
       if (status === 401) {
         if (loginModel == null) {
           loginModel = Modal.confirm({
@@ -138,7 +135,7 @@ export const request: RequestConfig = {
         }
       } else {
         notification.error({
-          message: `请求错误 ${status}: ${url}`,
+          message: `请求错误 ${status}`, // : ${url}
           description: codeMessage[response.status] || response.statusText,
         });
       }
@@ -150,73 +147,6 @@ export const request: RequestConfig = {
     }
     throw error;
   },
-  // 中间件统一提示处理
-  /* middlewares: [
-    async (ctx, next) => {
-      await next();
-      const { res } = ctx;
-      // 统一提示处理
-      if (res?.showType) {
-        const errorMessage = res.msg;
-        // const errorCode = res.code;
-        const errorData = res.data;
-        if (errorData === null || typeof errorData === 'string') {
-          switch (res.showType) {
-            case ErrorShowType.SILENT:
-              // do nothing
-              break;
-            case ErrorShowType.SUCCESS_MESSAGE:
-              message.success(errorData || errorMessage);
-              break;
-            case ErrorShowType.ERROR_MESSAGE:
-              message.error(errorData || errorMessage);
-              break;
-            case ErrorShowType.INFO_MESSAGE:
-              message.info(errorData || errorMessage);
-              break;
-            case ErrorShowType.WARN_MESSAGE:
-              message.warn(errorData || errorMessage);
-              break;
-            case ErrorShowType.SUCCESS_NOTIFICATION:
-              notification.success({
-                message: errorMessage,
-                description: errorData,
-              });
-              break;
-            case ErrorShowType.ERROR_NOTIFICATION:
-              notification.error({
-                message: errorMessage,
-                description: errorData,
-              });
-              break;
-            case ErrorShowType.INFO_NOTIFICATION:
-              notification.info({
-                message: errorMessage,
-                description: errorData,
-              });
-              break;
-            case ErrorShowType.WARN_NOTIFICATION:
-              notification.warn({
-                message: errorMessage,
-                description: errorData,
-              });
-              break;
-            /!* case ErrorShowType.REDIRECT:
-            // @ts-ignore
-            history.push({
-              pathname: DEFAULT_ERROR_PAGE,
-              query: { errorCode, errorMessage },
-            });
-            // redirect to error page
-            break; *!/
-            default:
-              message.error(errorMessage);
-              break;
-          }
-        }
-      }
-    },
-  ], */
   requestInterceptors: [
     (url, _options) => {
       const options = _options || {};

@@ -75,8 +75,14 @@ export function gotoUaa(): void {
     GOTO,
     window.location.pathname + window.location.search + window.location.hash,
   );
-  // @ts-ignore
-  window.location.href = `${UAA.uri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
+  if(REACT_APP_ENV === 'dev'){
+    // @ts-ignore
+    window.location.href = `${UAA.devUri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.devCallback}&response_type=token&scope=${UAA.scope}`;
+  }else{
+    // @ts-ignore
+    window.location.href = `${UAA.uri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
+  }
+
 }
 
 /**
