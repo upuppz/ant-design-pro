@@ -1,12 +1,12 @@
-import { Effect, Reducer } from 'umi';
-import { TableListItem } from './data';
+import type { Effect, Reducer } from 'umi';
+import type { TableListItem } from './data';
 import { list } from './service';
 
-export interface ModelState {
+export type ModelState = {
   list: TableListItem[];
 }
 
-export interface ModelType {
+export type ModelType = {
   namespace: string;
   state: ModelState;
   effects: {
@@ -29,7 +29,7 @@ const Model: ModelType = {
         const response = yield call(list);
         yield put({
           type: 'save',
-          payload: { tree: response.data },
+          payload: { list: response.data },
         });
         if (callback) {
           callback(response.data);

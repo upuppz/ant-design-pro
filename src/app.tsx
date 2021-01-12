@@ -16,6 +16,7 @@ import defaultSettings from '../config/defaultSettings';
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
   currentUser?: API.CurrentUserVO;
+
 }> {
 
   // 授权回调

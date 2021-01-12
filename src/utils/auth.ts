@@ -75,10 +75,10 @@ export function gotoUaa(): void {
     GOTO,
     window.location.pathname + window.location.search + window.location.hash,
   );
-  if(REACT_APP_ENV === 'dev'){
+  if (REACT_APP_ENV === 'dev') {
     // @ts-ignore
     window.location.href = `${UAA.devUri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.devCallback}&response_type=token&scope=${UAA.scope}`;
-  }else{
+  } else {
     // @ts-ignore
     window.location.href = `${UAA.uri}/oauth/authorize?client_id=${UAA.clientId}&redirect_uri=${UAA.callback}&response_type=token&scope=${UAA.scope}`;
   }
@@ -90,9 +90,14 @@ export function gotoUaa(): void {
  */
 export function loginOut(): void {
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
-  // @ts-ignore
-  window.location.href = `${UAA.uri}/logout?${ACCESS_TOKEN}=${accessToken}`;
   localStorage.clear();
+  if (REACT_APP_ENV === 'dev') {
+    // @ts-ignore
+    window.location.href = `${UAA.devUri}/logout?${ACCESS_TOKEN}=${accessToken}`;
+  } else {
+    // @ts-ignore
+    window.location.href = `${UAA.uri}/logout?${ACCESS_TOKEN}=${accessToken}`;
+  }
 }
 
 export function gotoLocal(): void {

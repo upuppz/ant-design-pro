@@ -222,10 +222,9 @@ const TableList: React.FC<PageProps> = ({ buildingTree, dispatch }) => {
     {
       title: '楼栋',
       dataIndex: 'buildingId',
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: () => {
         return (
           <TreeSelect
-            {...rest}
             onSelect={(value: any, option: any) => {
               selectBuildingName = option.title;
             }}
@@ -550,7 +549,7 @@ const TableList: React.FC<PageProps> = ({ buildingTree, dispatch }) => {
                   onClick={async (e) => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRowKeys);
-                      action.reload();
+                      action?.reload();
                     }
                   }}
                   selectedKeys={[]}

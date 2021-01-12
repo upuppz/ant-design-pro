@@ -4,8 +4,6 @@ import {
   Dropdown,
   Menu,
   message,
-  Input,
-  Select,
   TreeSelect,
   notification,
   Form,
@@ -26,8 +24,7 @@ import type { TableListItem } from './data';
 import { page, updateUser, addUser, removeUser } from './service';
 import type { TableListItem as DeptTableListItem } from '../Dept/data';
 import type { FormInstance } from 'antd/lib/form';
-
-const { Option } = Select;
+import { useAccess } from '@@/plugin-access/access';
 
 /**
  * 添加节点
@@ -99,13 +96,8 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
   const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [buildingVisible, handleBuildingVisible] = useState<boolean>(false);
-  const formRef = useRef<FormInstance|undefined>();
-
-  // const [faceVisible, handleFaceVisible] = useState<boolean>(true);
-  // const [faces, setFaces] = useState<Array<UploadFile>>([]);
-  // const [previewImage, setPreviewImage] = useState<string>();
-  // const [previewVisible, setPreviewVisible] = useState<boolean>(false);
-
+  const formRef = useRef<FormInstance | undefined>();
+  const { hashRoles } = useAccess();
   useEffect(() => {
     dispatch?.({ type: 'upmsRole/fetch' });
     dispatch?.({ type: 'upmsBuilding/fetchTree' });
@@ -114,16 +106,7 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
         type: 'upmsDept/fetchTree',
       });
     }, 800);
-  }, []);
-
-  // const handlePreview = (file: any) => {
-  //   setPreviewImage(file.url);
-  //   setPreviewVisible(true);
-  // };
-
-  // TODO:2020年07月29日09:15:05 上传人脸，对人脸照片质量进行检测
-  // const handleChange = (info: { fileList: React.SetStateAction<UploadFile[]> }) =>
-  //   setFaces(info.fileList);
+  }, [dispatch]);
 
   const userTypeValueEnum = {
     0: { text: '系统用户', status: 'Default' },
@@ -156,6 +139,7 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
       title: '用户类型',
       dataIndex: 'userType',
       valueEnum: userTypeValueEnum,
+      hideInSearch: hashRoles(["ROLE_RSTADMIN"]),
       formItemProps: {
         rules: [
           {
@@ -163,24 +147,6 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
             message: '请选择用户类型用户类型',
           },
         ],
-      },
-    },
-    {
-      title: '密码',
-      dataIndex: 'password',
-      hideInTable: true,
-      search: false,
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '密码为必填项',
-          },
-        ],
-      },
-      renderFormItem: (_: any, config) => {
-        console.log(config);
-        return <Input.Password placeholder="请输入" />;
       },
     },
     {
@@ -209,59 +175,6 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
       },
     },
     {
-      title: '角色',
-      dataIndex: 'roles',
-      hideInTable: true,
-      search: false,
-      renderFormItem: (_: any, { fieldProps }: any) => {
-        return (
-          <Select
-            mode="multiple"
-            {...fieldProps}
-            onChange={(value: any[]) => {
-              // 保安角色显示楼栋字段
-              handleBuildingVisible(value.includes(102));
-            }}
-            placeholder="请选择"
-          >
-            {roleList?.map((item) => {
-              return (
-                <Option key={item.roleId} value={item.roleId}>
-                  {item.roleName}
-                </Option>
-              );
-            })}
-          </Select>
-        );
-      },
-    },
-    {
-      title: '部门',
-      dataIndex: 'deptId',
-      search: false,
-      hideInTable: true,
-      renderFormItem: (_: any, { fieldProps }: any) => {
-        return <TreeSelect allowClear {...fieldProps} placeholder="请选择" treeData={deptTree} />;
-      },
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '部门为必选项',
-          },
-        ],
-      },
-    },
-    {
-      title: '部门',
-      dataIndex: 'deptId',
-      hideInTable: true,
-      hideInForm: true,
-      renderFormItem: (_: any, { fieldProps }: any) => {
-        return <TreeSelect allowClear {...fieldProps} placeholder="请选择" treeData={deptTree} />;
-      },
-    },
-    {
       title: '部门',
       hideInForm: true,
       search: false,
@@ -276,18 +189,6 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
       dataIndex: 'tel',
     },
     {
-      title: '身份证号',
-      dataIndex: 'idNum',
-      hideInTable: true,
-      search: false,
-    },
-    {
-      title: 'IC卡号',
-      dataIndex: 'icNum',
-      search: false,
-      hideInTable: true,
-    },
-    {
       title: '状态',
       dataIndex: 'enabled',
       valueEnum: statusValueEnum,
@@ -300,70 +201,6 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
         ],
       },
     },
-    {
-      title: '所属楼栋',
-      dataIndex: 'ext.buildingId',
-      hideInForm: !buildingVisible,
-      search: false,
-      hideInTable: true,
-      formItemProps: {
-        rules: [
-          {
-            required: buildingVisible,
-            message: '所属楼栋必填项',
-          },
-        ],
-      },
-      renderFormItem: (
-        _: any,
-        { type, defaultRender, fieldProps, ...rest }: any,
-        form: {
-          setFields: (arg0: { name: any; value: any }[]) => void;
-          getFieldValue: (arg0: string) => { (): any; new (): any; buildingId: any };
-        },
-      ) => {
-        if (rest.value === undefined) {
-          setTimeout(() => {
-            // @ts-ignore
-            form.setFields([{ name: rest.id, value: form.getFieldValue('ext')?.buildingId }]);
-          }, 100);
-        }
-        return <TreeSelect {...fieldProps} placeholder="请选择" treeData={buildingTree} />;
-      },
-    },
-    {
-      title: '个人描述',
-      dataIndex: 'description',
-      search: false,
-      hideInTable: true,
-      valueType: 'textarea',
-    },
-    // {
-    //   title: '人脸',
-    //   dataIndex: 'faces',
-    //   search: false,
-    //   hideInTable: true,
-    //   hideInForm: faceVisible,
-    //   renderFormItem: (_) => {
-    //     const uploadButton = (
-    //       <div>
-    //         <PlusOutlined />
-    //         <div className="ant-upload-text">Upload</div>
-    //       </div>
-    //     );
-    //
-    //     return (
-    //       <Upload
-    //         listType="picture-card"
-    //         onPreview={handlePreview}
-    //         fileList={faces}
-    //         onChange={handleChange}
-    //       >
-    //         {faces.length > 3 ? null : uploadButton}
-    //       </Upload>
-    //     );
-    //   },
-    // },
     {
       title: '创建时间',
       dataIndex: 'createdAtRange',
@@ -386,15 +223,10 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
         <a
           onClick={() => {
             const row = record;
-            // 请求人脸数据
-            // listFaces(row.userId).then((res) => {
-            //   setFaces(res.data);
-            // });
             handleBuildingVisible(row.roles.includes(102));
             handleUpdateModalVisible(true);
             row.password = '[PROTECTED]';
-            formRef.current?.setFieldsValue(row)
-            // handleFaceVisible(row.userType != '1');
+            formRef.current?.setFieldsValue(row);
           }}
         >
           编辑
@@ -416,7 +248,6 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
               onClick={() => {
                 handleCreateModalVisible(true);
                 handleBuildingVisible(false);
-                // handleFaceVisible(true);
               }}
             >
               <PlusOutlined /> 新建
@@ -454,16 +285,15 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
         <ModalForm
           title={updateModalVisible ? '更新' : '新建'}
           visible={updateModalVisible || createModalVisible}
-          initialValues={{ enabled: '1'}}
+          initialValues={{ enabled: '1' }}
           formRef={formRef}
           modalProps={{
             onCancel: () => {
               handleCreateModalVisible(false);
               handleUpdateModalVisible(false);
-            }
+            },
           }}
           onFinish={async (values) => {
-            // value.faces = faces;
             const ext: any = {};
             if (buildingVisible) {
               ext.buildingId = values['ext.buildingId'];
@@ -471,14 +301,14 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
               values.ext = JSON.stringify(ext);
             }
             let result;
-            if(updateModalVisible){
+            if (updateModalVisible) {
               result = await handleUpdate(values as TableListItem);
-            }else{
+            } else {
               result = await handleAdd(values as TableListItem);
             }
             if (result) {
               handleCreateModalVisible(false);
-              // setFaces([]);
+              handleUpdateModalVisible(false);
               if (actionRef.current) {
                 actionRef.current.reload();
               }
@@ -506,6 +336,7 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
             valueEnum={userTypeValueEnum}
             name="userType"
             label="用户类型"
+            disabled={hashRoles(["ROLE_RSTADMIN"])}
             rules={[{ required: true, message: '用户类型为必选项' }]}
           />
           <ProFormText.Password label="密码" name="password" required />
@@ -542,7 +373,7 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
               rules={[{ required: true, message: '所属楼栋为必选项' }]}
             >
               <TreeSelect allowClear placeholder="请选择" treeData={buildingTree} />
-            </Form.Item>) :null
+            </Form.Item>) : null
           }
 
           <Form.Item
@@ -564,86 +395,17 @@ const TableList: React.FC<PageProps> = ({ deptTree, buildingTree, roleList, disp
           />
           <ProFormTextArea name="description" label="个人描述" placeholder="请输入名称" />
         </ModalForm>
-
-        {/*  <CreateForm onCancel={() => handleCreateModalVisible(false)} modalVisible={createModalVisible}>
-          <ProTable<TableListItem, TableListItem>
-            onSubmit={async (value) => {
-              // value.faces = faces;
-              const ext: any = {};
-              if (buildingVisible) {
-                ext.buildingId = value['ext.buildingId'];
-                // eslint-disable-next-line no-param-reassign
-                value.ext = JSON.stringify(ext);
-              }
-              const success = await handleAdd(value);
-              if (success) {
-                handleCreateModalVisible(false);
-                // setFaces([]);
-                if (actionRef.current) {
-                  actionRef.current.reload();
-                }
-              }
-            }}
-            rowKey="userId"
-            type="form"
-            columns={columns}
-            form={{
-              initialValues: { enabled: '1' },
-              labelCol: { span: 4 },
-            }}
-          />
-         </CreateForm> */}
-        {/* {updateFormValues && Object.keys(updateFormValues).length ? (
-          <UpdateForm
-            onCancel={() => {
-              handleUpdateModalVisible(false);
-              // setFaces([]);
-              setUpdateFormValues({});
-            }}
-            modalVisible={updateModalVisible}
-          >
-            <ProTable<TableListItem, TableListItem>
-              onSubmit={async (value) => {
-                const fields = { ...value, userId: updateFormValues.userId };
-                const ext: any = {};
-                if (buildingVisible) {
-                  ext.buildingId = value['ext.buildingId'];
-                  fields.ext = JSON.stringify(ext);
-                }
-                const success = await handleUpdate(fields);
-                if (success) {
-                  handleUpdateModalVisible(false);
-                  // setFaces([]);
-                  setUpdateFormValues({});
-                  if (actionRef.current) {
-                    actionRef.current.reload();
-                  }
-                }
-              }}
-              rowKey="userId"
-              type="form"
-              columns={columns}
-              form={{
-                initialValues: updateFormValues,
-                labelCol: { span: 4 },
-              }}
-            />
-          </UpdateForm>
-        ) : null} */}
       </PageHeaderWrapper>
-      {/* <Modal visible={previewVisible} onCancel={() => setPreviewVisible(false)}>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal> */}
     </>
   );
 };
 
 export default connect(
   ({
-    upmsDept,
-    upmsBuilding,
-    upmsRole,
-  }: {
+     upmsDept,
+     upmsBuilding,
+     upmsRole,
+   }: {
     upmsDept: ModelState;
     upmsBuilding: BuildingModelState;
     upmsRole: RoleModelState;

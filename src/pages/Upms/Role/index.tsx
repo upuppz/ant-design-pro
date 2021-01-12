@@ -1,16 +1,17 @@
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Menu, message, TreeSelect } from 'antd';
+import { Button, Dropdown, Form, Menu, message, TreeSelect } from 'antd';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns, ActionType } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { connect } from 'umi';
-import { ModelState as PermissionModelState } from '@/pages/Upms/Permission/model';
-import { ConnectProps } from '@@/plugin-dva/connect';
-import { TableListItem as PermissionTableListItem } from '@/pages/Upms/Permission/data';
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
-import { TableListItem } from './data';
+import type { ModelState as PermissionModelState } from '@/pages/Upms/Permission/model';
+import type { ConnectProps } from '@@/plugin-dva/connect';
+import type { TableListItem as PermissionTableListItem } from '@/pages/Upms/Permission/data';
+import type { TableListItem } from './data';
 import { list, update, add, remove } from './service';
+import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form';
+import type { FormInstance } from 'antd/lib/form';
 
 /**
  * 添加节点
@@ -68,20 +69,24 @@ const handleRemove = async (selectedRows: (string | number)[]) => {
   }
 };
 
-interface PageProps extends ConnectProps {
+type PageProps = {
   permissions: PermissionTableListItem[];
-}
+} & ConnectProps
 
 const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
+  const [createModalVisible, handleCreateModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [updateFormValues, setUpdateFormValues] = useState<TableListItem | any>({});
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<FormInstance | undefined>();
 
   useEffect(() => {
     dispatch?.({ type: 'upmsPermission/fetch' });
-  }, []);
+  }, [dispatch]);
 
+  const valueEnumStatus = {
+    0: { text: '启用', status: 'Success' },
+    1: { text: '禁用', status: 'Warning' },
+  };
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '#',
@@ -121,10 +126,7 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
     {
       title: '状态',
       dataIndex: 'enabled',
-      valueEnum: {
-        0: { text: '启用', status: 'Success' },
-        1: { text: '禁用', status: 'Warning' },
-      },
+      valueEnum: valueEnumStatus,
       formItemProps: {
         rules: [
           {
@@ -139,9 +141,9 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
       dataIndex: 'permissions',
       hideInTable: true,
       search: false,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: () => {
         return (
-          <TreeSelect treeCheckable {...rest} placeholder="请选择" treeData={permissions} />
+          <TreeSelect treeCheckable placeholder="请选择" treeData={permissions} />
         );
       },
     },
@@ -161,7 +163,7 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
             onClick={() => {
               const row = record;
               handleUpdateModalVisible(true);
-              setUpdateFormValues(row);
+              formRef.current?.setFieldsValue(row);
             }}
           >
             编辑
@@ -178,7 +180,7 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
         actionRef={actionRef}
         rowKey="roleId"
         toolBarRender={(action, { selectedRowKeys }) => [
-          <Button key='create' type="primary" onClick={() => handleModalVisible(true)}>
+          <Button key='create' type="primary" onClick={() => handleCreateModalVisible(true)}>
             <PlusOutlined /> 新建
           </Button>,
           selectedRowKeys && selectedRowKeys.length > 0 && (
@@ -189,7 +191,7 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
                   onClick={async (e) => {
                     if (e.key === 'remove') {
                       await handleRemove(selectedRowKeys);
-                      action.reload();
+                      action?.reload();
                     }
                   }}
                   selectedKeys={[]}
@@ -211,7 +213,70 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
           labelCol: { span: 5 },
         }}
       />
-      <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
+      <ModalForm
+        title={updateModalVisible ? '更新' : '新建'}
+        visible={updateModalVisible || createModalVisible}
+        formRef={formRef}
+        modalProps={{
+          onCancel: () => {
+            handleCreateModalVisible(false);
+            handleUpdateModalVisible(false);
+          },
+        }}
+        onFinish={async (values) => {
+          let result;
+          if (updateModalVisible) {
+            result = await handleUpdate(values as TableListItem);
+          } else {
+            result = await handleAdd(values as TableListItem);
+          }
+          if (result) {
+            handleCreateModalVisible(false);
+            handleUpdateModalVisible(false);
+            if (actionRef.current) {
+              actionRef.current.reload();
+            }
+          }
+          return result;
+        }}
+      >
+        <ProFormText
+          name="roleId"
+          hidden
+        />
+        <ProFormText
+          name="roleName"
+          label="角色名称"
+          placeholder="请输入角色名称"
+          rules={[{ required: true, message: '角色名称为必填项' }]}
+        />
+        <ProFormText
+          name="roleKey"
+          label="角色标识"
+          placeholder="请输入角色标识"
+          rules={[{ required: true, message: '角色标识为必填项' }]}
+        />
+        <ProFormText
+          name="description"
+          label="角色描述"
+          placeholder="请输入角色描述"
+        />
+        <ProFormSelect
+          valueEnum={valueEnumStatus}
+          name="enabled"
+          label="状态"
+          rules={[{ required: true, message: '状态为必选项' }]}
+        />
+        <Form.Item
+          label="权限"
+          name="permissions"
+        >
+          <TreeSelect treeCheckable placeholder="请选择" treeData={permissions} />
+        </Form.Item>
+      </ModalForm>
+
+
+      {/* <CreateForm onCancel={() => handleModalVisible(false)} modalVisible={createModalVisible}>
         <ProTable<TableListItem, TableListItem>
           onSubmit={async (value) => {
             const success = await handleAdd(value);
@@ -256,7 +321,7 @@ const TableList: React.FC<PageProps> = ({ permissions, dispatch }) => {
             }}
           />
         </UpdateForm>
-      ) : null}
+      ) : null} */}
     </PageHeaderWrapper>
   );
 };

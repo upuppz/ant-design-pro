@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import type { ActionType, ProColumns } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import {
   Tag,
   TreeSelect,
@@ -62,7 +63,7 @@ export default () => {
       dataIndex: 'deptId',
       hideInTable: true,
       renderFormItem: (_, { type, defaultRender, ...rest }) => {
-        return <TreeSelect {...rest} allowClear placeholder="请选择" treeData={deptTree} />;
+        return <TreeSelect allowClear placeholder="请选择" treeData={deptTree} />;
       },
     },
     {
@@ -172,7 +173,7 @@ export default () => {
                   setWalletValues({});
                   setTopUpVisible(false);
                   if (actionRef.current) {
-                    actionRef.current.reloadAndRest();
+                    actionRef.current.reload();
                   }
                   notification.success({
                     message: '充值成功',

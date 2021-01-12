@@ -100,8 +100,8 @@ const TableList: React.FC<{}> = () => {
       title: '上级',
       dataIndex: 'parentId',
       hideInTable: true,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
-        return <TreeSelect {...rest} allowClear placeholder="请选择" treeData={buildingTree} />;
+      renderFormItem: () => {
+        return <TreeSelect allowClear placeholder="请选择" treeData={buildingTree} />;
       },
     },
     {

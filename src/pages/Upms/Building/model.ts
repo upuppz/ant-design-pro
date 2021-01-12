@@ -1,12 +1,12 @@
-import { Effect, Reducer } from 'umi';
-import { TableListItem } from './data';
+import type { Effect, Reducer } from 'umi';
+import type { TableListItem } from './data';
 import { tree } from './service';
 
-export interface ModelState {
+export type ModelState = {
   tree: TableListItem[];
 }
 
-export interface ModelType {
+export type ModelType = {
   namespace: string;
   state: ModelState;
   effects: {
