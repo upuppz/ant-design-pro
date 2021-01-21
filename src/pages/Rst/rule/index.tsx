@@ -17,7 +17,7 @@ import { list, save } from './service';
 import { DiningRule } from './data';
 
 export default () => {
-  const [sliderRule, setSliderRule] = useState<Array<number | [number, number]>>([]);
+  const [sliderRule, setSliderRule] = useState<(number | [number, number])[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [useForm] = Form.useForm();
   const [loadingList, setLoadingList] = useState<boolean>(true);
@@ -39,7 +39,7 @@ export default () => {
       );
       setLoadingList(true);
     });
-  }, []);
+  }, [useForm]);
 
   // 把一天24小时间按10分钟切段
   const period = (60 * 23) / 10;
@@ -54,12 +54,13 @@ export default () => {
 
   function onFinish(values: any) {
     setLoading(true);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    save(values.rule)
+    const format = values.rule?.map((value: any) => {
+      return { ...value, rule1: value.rule[0], rule2: value.rule[1] };
+    });
+    save(format)
       .then(() => {
         setLoading(false);
         message.success('规则更新成功!');
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       })
       .catch(() => {
         setLoading(false);
