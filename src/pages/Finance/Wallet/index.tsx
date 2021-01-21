@@ -20,7 +20,6 @@ import { dtoPage, topUp } from './service';
 export default () => {
   const [deptTree, setDeptTree] = useState([]);
   const [topUpVisible, setTopUpVisible] = useState<boolean>(false);
-  const [walletValues, setWalletValues] = useState<TableListItem | any>({});
   const [btnLoading, setBtnLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
   const actionRef = useRef<ActionType>();
@@ -62,7 +61,7 @@ export default () => {
       title: '部门',
       dataIndex: 'deptId',
       hideInTable: true,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: () => {
         return <TreeSelect allowClear placeholder="请选择" treeData={deptTree} />;
       },
     },
@@ -116,7 +115,7 @@ export default () => {
             type="primary"
             shape="circle"
             onClick={() => {
-              setWalletValues(record);
+              form.setFieldsValue(record);
               setTopUpVisible(true);
             }}
           >
@@ -154,7 +153,6 @@ export default () => {
         okButtonProps={{ loading: btnLoading }}
         cancelButtonProps={{ loading: btnLoading }}
         onCancel={() => {
-          setWalletValues({});
           setTopUpVisible(false);
         }}
         onOk={() => {
@@ -166,11 +164,11 @@ export default () => {
           form={form}
           onFinish={(values) => {
             setBtnLoading(true);
-            topUp({ targetId: walletValues.walletId, fee: values.fee, remark: values.remark })
+            topUp({ targetId: values.walletId, fee: values.fee, remark: values.remark })
               .then((res) => {
                 if (res.code === '00000') {
                   setBtnLoading(false);
-                  setWalletValues({});
+                  form.resetFields();
                   setTopUpVisible(false);
                   if (actionRef.current) {
                     actionRef.current.reload();
@@ -185,8 +183,11 @@ export default () => {
                 setBtnLoading(false);
               });
           }}
-          initialValues={walletValues}
+          // initialValues={walletValues}
         >
+          <Form.Item label="targetId" name="walletId" hidden>
+            <Input disabled />
+          </Form.Item>
           <Form.Item label="用户名" name="username">
             <Input disabled />
           </Form.Item>
