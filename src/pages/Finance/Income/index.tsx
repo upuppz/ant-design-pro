@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable, { ProColumns } from '@ant-design/pro-table';
+import type { ProColumns } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
 import { Tag, TreeSelect } from 'antd';
 import { listDeptTree } from '@/services/upms';
-import { TableListItem } from './data';
+import type { TableListItem } from './data';
 import { dtoPage } from './service';
+import { history } from 'umi';
 
 export default () => {
   const [deptTree, setDeptTree] = useState([]);
-
+  console.log(history);
   useEffect(() => {
     listDeptTree().then((res) => {
       setDeptTree(res.data);
@@ -17,7 +19,7 @@ export default () => {
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '#',
+      title: '流水号',
       dataIndex: 'id',
     },
     {
@@ -46,7 +48,7 @@ export default () => {
       title: '部门',
       dataIndex: 'deptId',
       hideInTable: true,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: () => {
         return <TreeSelect allowClear placeholder="请选择" treeData={deptTree} />;
       },
     },
@@ -103,6 +105,7 @@ export default () => {
         headerTitle="查询表格"
         rowKey="id"
         columns={columns}
+        form={{  initialValues: history.location.query }}
         request={(params, sorter, filter) =>
           dtoPage({ ...params, sorter: { createdAt: 'descend', ...sorter }, filter })
         }

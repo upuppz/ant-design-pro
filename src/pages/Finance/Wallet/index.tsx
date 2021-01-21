@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
+import { history } from 'umi';
 import {
   Tag,
   TreeSelect,
@@ -14,7 +15,7 @@ import {
   Space,
 } from 'antd';
 import { listDeptTree } from '@/services/upms';
-import { TableListItem } from './data';
+import type { TableListItem } from './data';
 import { dtoPage, topUp } from './service';
 
 export default () => {
@@ -121,10 +122,14 @@ export default () => {
           >
             充
           </Button>
-          <Button type="primary" shape="circle">
+          <Button type="primary" onClick={()=>{
+            history.push(`/finance/income?username=${record.username}`);
+          }} shape="circle">
             入
           </Button>
-          <Button type="primary" shape="circle">
+          <Button onClick={()=>{
+            history.push(`/finance/expenditure?username=${record.username}`);
+          }} type="primary" shape="circle">
             出
           </Button>
         </Space>

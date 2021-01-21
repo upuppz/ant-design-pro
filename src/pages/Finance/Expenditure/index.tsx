@@ -6,6 +6,7 @@ import { listDeptTree } from '@/services/upms';
 import { all } from '@/pages/Rst/ExtraCost/service';
 import { TableListItem } from './data';
 import { dtoPage, refund as refundReq } from './service';
+import { history } from '@@/core/history';
 
 export default () => {
   const [deptTree, setDeptTree] = useState([]);
@@ -63,7 +64,7 @@ export default () => {
       title: '部门',
       dataIndex: 'deptId',
       hideInTable: true,
-      renderFormItem: (_, { type, defaultRender, ...rest }) => {
+      renderFormItem: () => {
         return <TreeSelect allowClear placeholder="请选择" treeData={deptTree} />;
       },
     },
@@ -158,6 +159,7 @@ export default () => {
         rowKey="id"
         actionRef={actionRef}
         columns={columns}
+        form={{  initialValues: history.location.query }}
         request={(params, sorter, filter) => {
           return dtoPage({ ...params, sorter: { createdAt: 'descend', ...sorter }, filter });
         }}
